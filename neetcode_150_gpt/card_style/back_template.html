@@ -50,57 +50,56 @@
 </div>
 {{/Comments}}
 
-<!-- Prism theme -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-
-<!-- Prism core in MANUAL mode -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" data-manual></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<link rel="stylesheet" href="prism-tomorrow.min.css">
+<script src="prism.min.js" data-manual></script>
+<script src="prism-python.min.js"></script>
 
 <script>
 (function () {
-  // Convert <br> / <div> line breaks created by editors into real \n,
-  // then set as textContent before Prism runs (works on desktop + Android).
   function normalizeCodeBlocks() {
-    document.querySelectorAll('pre > code').forEach(function(code) {
-      // If already normalized once, skip
+    document.querySelectorAll('pre > code').forEach(function (code) {
       if (code.dataset.normalized) return;
 
-      // Work with the current HTML (may contain <br>, <div>, &nbsp;, entities)
       var html = code.innerHTML;
 
-      // Turn <div>…</div> blocks into line breaks
+      // Convert editor-inserted blocks/line breaks to real newlines
       html = html
         .replace(/<\/div>\s*<div>/gi, '\n')
         .replace(/<div>/gi, '')
-        .replace(/<\/div>/gi, '');
+        .replace(/<\/div>/gi, '')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&');
 
-      // Turn <br> variants into line breaks
-      html = html.replace(/<br\s*\/?>/gi, '\n');
-
-      // Replace &nbsp; with spaces
-      html = html.replace(/&nbsp;/g, ' ');
-
-      // Decode common entities that might sneak in
-      html = html.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-
-      // Now set as pure text so the <pre> respects real newlines/spaces
+      // Put plain text back so <pre> respects spaces/newlines
       code.textContent = html;
-
       code.dataset.normalized = '1';
     });
   }
 
-  function runHighlight() {
-    normalizeCodeBlocks();
-    if (window.Prism && Prism.highlightAll) Prism.highlightAll();
+  // Wait until Prism is actually available on iOS before highlighting
+  function waitForPrismAndHighlight(startTs) {
+    startTs = startTs || Date.now();
+    if (window.Prism && Prism.highlightAll) {
+      normalizeCodeBlocks();
+      Prism.highlightAll();
+      return;
+    }
+    if (Date.now() - startTs > 3000) { // 3s safety cap
+      normalizeCodeBlocks(); // at least keep indentation even if Prism failed
+      return;
+    }
+    setTimeout(function(){ waitForPrismAndHighlight(startTs); }, 50);
   }
 
-  // Run after DOM is ready; Android sometimes needs an extra tick.
+  // iOS sometimes fires scripts before DOM is fully ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function(){ setTimeout(runHighlight, 0); });
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(waitForPrismAndHighlight, 0); });
   } else {
-    setTimeout(runHighlight, 0);
+    setTimeout(waitForPrismAndHighlight, 0);
   }
 })();
 </script>
+
