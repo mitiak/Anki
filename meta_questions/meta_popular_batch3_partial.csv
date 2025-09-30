@@ -1,0 +1,72 @@
+Problem Name;Description;Example;Algorithm;Short Solution;Solution;Time Complexity;Space Complexity;Link;Tags;Code;Comments
+Combination Sum;Given an array of distinct integers candidates and a target integer target, return a list of all unique combinations of candidates where the chosen numbers sum to target. You may use the same number unlimited times.;"// Example
+// candidates=[2,3,6,7], target=7 -> [[2,2,3],[7]]";Backtracking with pruning;DFS exploring candidates with current sum.;"At each index, either pick candidate and recurse (allow repeat) or skip it; stop when sum==target or >target.";O(N^(T/min));O(T);https://leetcode.com/problems/combination-sum/;Backtracking, Medium, Meta;"def combinationSum(candidates, target):
+    res=[]
+    def dfs(i,cur,sumv):
+        if sumv==target: res.append(cur[:]); return
+        if i==len(candidates) or sumv>target: return
+        cur.append(candidates[i]); dfs(i,cur,sumv+candidates[i]); cur.pop()
+        dfs(i+1,cur,sumv)
+    dfs(0,[],0); return res";
+Combination Sum II;Given candidates with possible duplicates and a target, return unique combinations summing to target. Each number may be used at most once.;"// Example
+// candidates=[10,1,2,7,6,1,5], target=8 -> [[1,1,6],[1,2,5],[1,7],[2,6]]";Backtracking with skip duplicates;Sort and skip identicals at same recursion depth.;"Sort array; in recursion, for each index, skip if same as previous and not chosen; recurse with next index.";O(2^n);O(n);https://leetcode.com/problems/combination-sum-ii/;Backtracking, Medium, Meta;"def combinationSum2(candidates, target):
+    candidates.sort(); res=[]
+    def dfs(start,path,remain):
+        if remain==0: res.append(path[:]); return
+        for i in range(start,len(candidates)):
+            if i>start and candidates[i]==candidates[i-1]: continue
+            if candidates[i]>remain: break
+            dfs(i+1,path+[candidates[i]],remain-candidates[i])
+    dfs(0,[],target); return res";
+Word Search;Given an m x n grid of characters and a word, return true if the word exists in the grid. The word can be constructed from letters of sequentially adjacent cells (horizontally or vertically).;"// Example
+// board=[[""A"",""B"",""C"",""E""],[""S"",""F"",""C"",""S""],[""A"",""D"",""E"",""E""]], word=""ABCCED"" -> true";DFS backtracking;Try each cell as start, DFS neighbors.;"Mark visited cells temporarily; backtrack if mismatch; succeed if reached end of word.";O(m*n*L);O(L);https://leetcode.com/problems/word-search/;Backtracking, Matrix, Medium, Meta;"def exist(board, word):
+    m,n=len(board),len(board[0])
+    def dfs(i,j,k):
+        if k==len(word): return True
+        if i<0 or i>=m or j<0 or j>=n or board[i][j]!=word[k]: return False
+        tmp,board[i][j]=board[i][j],'#'
+        found=dfs(i+1,j,k+1) or dfs(i-1,j,k+1) or dfs(i,j+1,k+1) or dfs(i,j-1,k+1)
+        board[i][j]=tmp
+        return found
+    for i in range(m):
+        for j in range(n):
+            if dfs(i,j,0): return True
+    return False";
+N-Queens;The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.;"// Example
+// n=4 -> [["".Q.."",""...Q"",""Q..."",""..Q.""],[""..Q."",""Q..."",""...Q"","".Q..""]]";Backtracking with sets;Track used columns, diagonals.;"At each row, try columns not in used sets; place queen and recurse.";O(n!);O(n);https://leetcode.com/problems/n-queens/;Backtracking, Hard, Meta;"def solveNQueens(n):
+    res=[]
+    cols=set(); d1=set(); d2=set()
+    board=[['.']*n for _ in range(n)]
+    def dfs(r):
+        if r==n:
+            res.append([''.join(row) for row in board]); return
+        for c in range(n):
+            if c in cols or r-c in d1 or r+c in d2: continue
+            cols.add(c); d1.add(r-c); d2.add(r+c)
+            board[r][c]='Q'; dfs(r+1)
+            board[r][c]='.'; cols.remove(c); d1.remove(r-c); d2.remove(r+c)
+    dfs(0); return res";
+Sudoku Solver;Write a program to solve a Sudoku puzzle by filling empty cells. The board is a 9x9 grid partially filled with digits, empty cells are '.'.;"// Example
+// input partially filled board -> output fully solved";Backtracking with constraints;"Try numbers 1-9 that fit; recurse.";"Use sets/bitmasks for row, col, box constraints; DFS filling empties; backtrack when stuck.";O(9^(m)) worst;O(1);https://leetcode.com/problems/sudoku-solver/;Backtracking, Hard, Meta;"def solveSudoku(board):
+    rows=[set() for _ in range(9)]
+    cols=[set() for _ in range(9)]
+    boxes=[set() for _ in range(9)]
+    empties=[]
+    for i in range(9):
+        for j in range(9):
+            if board[i][j]=='.': empties.append((i,j))
+            else:
+                v=board[i][j]
+                rows[i].add(v); cols[j].add(v); boxes[(i//3)*3+j//3].add(v)
+    def dfs(k):
+        if k==len(empties): return True
+        i,j=empties[k]; b=(i//3)*3+j//3
+        for v in map(str,range(1,10)):
+            if v not in rows[i] and v not in cols[j] and v not in boxes[b]:
+                board[i][j]=v
+                rows[i].add(v); cols[j].add(v); boxes[b].add(v)
+                if dfs(k+1): return True
+                board[i][j]='.'
+                rows[i].remove(v); cols[j].remove(v); boxes[b].remove(v)
+        return False
+    dfs(0)";

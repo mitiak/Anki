@@ -1,0 +1,339 @@
+Problem Name;Description;Example;Algorithm;Short Solution;Solution;Time Complexity;Space Complexity;Link;Tags;Code;Comments
+Two Sum;Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. Assume exactly one solution and you may not use the same element twice.;"// Example
+// nums = [2,7,11,15], target = 9
+// Output: [0,1]";Hash Map (value→index);Scan and check if target - x was seen.;"Iterate nums; for each x at i, if (target-x) in map, return [map[target-x], i]; otherwise store x→i.";O(n);O(n);https://leetcode.com/problems/two-sum/;Array, Hash Map, Easy, Meta;"from typing import List
+def twoSum(nums: List[int], target: int) -> List[int]:
+    seen = {}
+    for i, x in enumerate(nums):
+        y = target - x
+        if y in seen:
+            return [seen[y], i]
+        seen[x] = i";
+Add Two Numbers;You are given two non-empty linked lists representing two non-negative integers in reverse order. Add the two numbers and return the sum as a linked list.;"// Example
+// l1 = [2,4,3], l2 = [5,6,4] -> [7,0,8]";Linked List + Carry;Simulate grade-school addition with carry.;"Traverse both lists with carry; create new nodes for each digit; append remaining carry if needed.";O(m+n);O(1) extra;https://leetcode.com/problems/add-two-numbers/;Linked List, Math, Medium, Meta;"class ListNode:
+    def __init__(self,val=0,next=None):
+        self.val,self.next=val,next
+def addTwoNumbers(l1: ListNode, l2: ListNode) -> ListNode:
+    dummy=tail=ListNode()
+    carry=0
+    while l1 or l2 or carry:
+        v=carry+(l1.val if l1 else 0)+(l2.val if l2 else 0)
+        carry,v=divmod(v,10)
+        tail.next=ListNode(v); tail=tail.next
+        l1=l1.next if l1 else None
+        l2=l2.next if l2 else None
+    return dummy.next";
+Valid Parentheses;Given a string s containing only '()[]{}', determine if the input string is valid.;"// Example
+// s = ""()[]{}"" -> true; s = ""(]"" -> false";Stack;"Push opening; on closing, check stack top matches.";"Use a map close→open; iterate chars updating stack; valid if stack empty at end.";O(n);O(n);https://leetcode.com/problems/valid-parentheses/;Stack, String, Easy, Meta;"def isValid(s: str) -> bool:
+    mp={')':'(',']':'[','}':'{'}
+    st=[]
+    for c in s:
+        if c in '([{': st.append(c)
+        else:
+            if not st or st.pop()!=mp[c]: return False
+    return not st";
+Merge Intervals;Given an array of intervals where intervals[i] = [start_i, end_i], merge all overlapping intervals.;"// Example
+// [[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]";Sort + One Pass;"Sort by start; merge when current.start ≤ last.end.";"After sorting, initialize with first interval; for each next, if overlap, extend end = max; else append.";O(n log n);O(1) extra;https://leetcode.com/problems/merge-intervals/;Intervals, Sorting, Medium, Meta;"from typing import List
+def merge(intervals: List[List[int]]) -> List[List[int]]:
+    intervals.sort()
+    res=[]
+    for s,e in intervals:
+        if not res or s>res[-1][1]:
+            res.append([s,e])
+        else:
+            res[-1][1]=max(res[-1][1],e)
+    return res";
+Meeting Rooms II;Given an array of meeting time intervals consisting of start and end times, find the minimum number of conference rooms required.;"// Example
+// [[0,30],[5,10],[15,20]] -> 2";Min-Heap of end times;"Sort by start; pop ends ≤ start; push current end.";"Keep heap of ongoing meeting end times; size is rooms needed; track max size.";O(n log n);O(n);https://leetcode.com/problems/meeting-rooms-ii/;Intervals, Heap, Medium, Meta;"import heapq
+from typing import List
+def minMeetingRooms(intervals: List[List[int]]) -> int:
+    intervals.sort()
+    h=[]
+    best=0
+    for s,e in intervals:
+        while h and h[0]<=s: heapq.heappop(h)
+        heapq.heappush(h,e)
+        best=max(best,len(h))
+    return best";
+Number of Islands;Given a 2D grid map of '1's (land) and '0's (water), return the number of islands.;"// Example
+// grid = [[""1"",""1"",""0""],[""0"",""1"",""0""],[""1"",""0"",""1""]] -> 3";DFS/BFS flood fill;"Scan cells; when '1' found, flood fill and increment.";Use DFS to mark connected land as visited (flip to '0' or use visited set).;O(m*n);O(m*n);https://leetcode.com/problems/number-of-islands/;Graph, DFS/BFS, Medium, Meta;"from typing import List
+def numIslands(grid: List[List[str]]) -> int:
+    if not grid: return 0
+    m,n=len(grid),len(grid[0])
+    def dfs(i,j):
+        if i<0 or i>=m or j<0 or j>=n or grid[i][j]!=""1"": return
+        grid[i][j]=""0""
+        dfs(i+1,j); dfs(i-1,j); dfs(i,j+1); dfs(i,j-1)
+    cnt=0
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j]==""1"":
+                cnt+=1; dfs(i,j)
+    return cnt";
+Clone Graph;Given a reference of a node in a connected undirected graph, return a deep copy of the graph.;// Example graph: 1-2-3-4 (undirected cycles);Graph traversal + map;"Map original→clone; BFS/DFS neighbors.";"Create node clones lazily when visiting neighbors; reuse via dict to avoid cycles.";O(V+E);O(V);https://leetcode.com/problems/clone-graph/;Graph, BFS/DFS, Medium, Meta;"from collections import deque
+class Node:
+    def __init__(self, val=0, neighbors=None):
+        self.val=val; self.neighbors=neighbors or []
+def cloneGraph(node: 'Node') -> 'Node':
+    if not node: return None
+    mp={node:Node(node.val)}
+    q=deque([node])
+    while q:
+        u=q.popleft()
+        for v in u.neighbors:
+            if v not in mp:
+                mp[v]=Node(v.val); q.append(v)
+            mp[u].neighbors.append(mp[v])
+    return mp[node]";
+Course Schedule;Given numCourses and prerequisites, determine if it's possible to finish all courses.;// Example: num=2, prereq=[[1,0]] -> true;Topological Sort (Kahn);BFS over in-degree 0 nodes.;"Build adjacency and in-degrees; process queue; valid if processed count == numCourses.";O(V+E);O(V+E);https://leetcode.com/problems/course-schedule/;Graph, Topo Sort, Medium, Meta;"from collections import deque, defaultdict
+from typing import List
+def canFinish(numCourses: int, prerequisites: List[List[int]]) -> bool:
+    adj=defaultdict(list); indeg=[0]*numCourses
+    for a,b in prerequisites:
+        adj[b].append(a); indeg[a]+=1
+    q=deque([i for i in range(numCourses) if indeg[i]==0])
+    seen=0
+    while q:
+        u=q.popleft(); seen+=1
+        for v in adj[u]:
+            indeg[v]-=1
+            if indeg[v]==0: q.append(v)
+    return seen==numCourses";
+Word Break;Given a string s and a dictionary wordDict, return true if s can be segmented.;// Example: s='leetcode', dict=['leet','code'] -> true;DP over prefixes;dp[i]=any dp[j] and s[j:i] in dict.;"Use boolean dp; iterate i and limited word lengths.";O(n*L);O(n);https://leetcode.com/problems/word-break/;DP, String, Medium, Meta;"from typing import List
+def wordBreak(s: str, wordDict: List[str]) -> bool:
+    words=set(wordDict); maxL=max(map(len,words)) if words else 0
+    n=len(s); dp=[False]*(n+1); dp[0]=True
+    for i in range(1,n+1):
+        for L in range(1,min(maxL,i)+1):
+            if dp[i-L] and s[i-L:i] in words:
+                dp[i]=True; break
+    return dp[n]";
+Palindrome Linked List;Return true if a singly linked list is a palindrome.;// Example: [1,2,2,1] -> true;Middle + reverse second half;"Reverse second half; compare halves.";Slow/fast to mid, reverse, compare.;O(n);O(1);https://leetcode.com/problems/palindrome-linked-list/;Linked List, Two Pointers, Easy, Meta;"class ListNode:
+    def __init__(self,val=0,next=None):
+        self.val,self.next=val,next
+def isPalindrome(head: ListNode) -> bool:
+    slow=fast=head
+    while fast and fast.next:
+        slow=slow.next; fast=fast.next.next
+    prev=None; cur=slow
+    while cur:
+        nxt=cur.next; cur.next=prev; prev,cur=cur,nxt
+    p1,p2=head,prev
+    while p2:
+        if p1.val!=p2.val: return False
+        p1=p1.next; p2=p2.next
+    return True";
+Reverse Linked List;Reverse a singly linked list.;// Example: [1,2,3] -> [3,2,1];Iterative reversal;Use prev/curr pointers.;Rewire next pointers and return prev.;O(n);O(1);https://leetcode.com/problems/reverse-linked-list/;Linked List, Easy, Meta;"class ListNode:
+    def __init__(self,val=0,next=None):
+        self.val,self.next=val,next
+def reverseList(head: ListNode) -> ListNode:
+    prev=None; cur=head
+    while cur:
+        nxt=cur.next; cur.next=prev; prev,cur=cur,nxt
+    return prev";
+Kth Largest Element in an Array;Find the kth largest element in an unsorted array.;// Example: [3,2,1,5,6,4], k=2 -> 5;Quickselect;Partition to index n-k.;Randomized partition loop until index found.;O(n) avg;O(1);https://leetcode.com/problems/kth-largest-element-in-an-array/;Array, Quickselect, Medium, Meta;"import random
+from typing import List
+def findKthLargest(nums: List[int], k: int) -> int:
+    k=len(nums)-k; l,r=0,len(nums)-1
+    def part(l,r,p):
+        pv=nums[p]; nums[p],nums[r]=nums[r],nums[p]
+        i=l
+        for j in range(l,r):
+            if nums[j]<pv: nums[i],nums[j]=nums[j],nums[i]; i+=1
+        nums[i],nums[r]=nums[r],nums[i]; return i
+    while True:
+        p=random.randint(l,r); m=part(l,r,p)
+        if m==k: return nums[m]
+        if m<k: l=m+1
+        else: r=m-1";
+Sliding Window Maximum;Return max in each sliding window of size k.;// Example: [1,3,-1,-3,5,3,6,7], k=3 -> [3,3,5,5,6,7];Deque (monotonic);Maintain decreasing deque of indices.;"Pop out-of-window front; pop smaller backs; front is max.";O(n);O(k);https://leetcode.com/problems/sliding-window-maximum/;Deque, Array, Hard, Meta;"from collections import deque
+from typing import List
+def maxSlidingWindow(nums: List[int], k: int) -> List[int]:
+    dq=deque(); res=[]
+    for i,x in enumerate(nums):
+        while dq and dq[0]<=i-k: dq.popleft()
+        while dq and nums[dq[-1]]<=x: dq.pop()
+        dq.append(i)
+        if i>=k-1: res.append(nums[dq[0]])
+    return res";
+Subarray Sum Equals K;Count subarrays summing to k.;// Example: [1,1,1], k=2 -> 2;Prefix sum + hashmap;Count (sum-k) occurrences.;"Maintain freq dict with zero base; accumulate sum and add freq[sum-k].";O(n);O(n);https://leetcode.com/problems/subarray-sum-equals-k/;Prefix Sum, Hash Map, Medium, Meta;"from collections import defaultdict
+from typing import List
+def subarraySum(nums: List[int], k: int) -> int:
+    freq=defaultdict(int); freq[0]=1
+    s=ans=0
+    for x in nums:
+        s+=x; ans+=freq[s-k]; freq[s]+=1
+    return ans";
+Longest Substring Without Repeating Characters;Length of the longest substring without repeating chars.;// Example: 'abcabcbb' -> 3;Sliding window + last index;Move left when duplicate.;"Track last seen index per char; update left and best.";O(n);O(k);https://leetcode.com/problems/longest-substring-without-repeating-characters/;String, Sliding Window, Medium, Meta;"def lengthOfLongestSubstring(s: str) -> int:
+    last={}; left=0; best=0
+    for i,ch in enumerate(s):
+        if ch in last and last[ch]>=left: left=last[ch]+1
+        last[ch]=i; best=max(best,i-left+1)
+    return best";
+Longest Palindromic Substring;Return the longest palindromic substring.;// Example: 'babad' -> 'bab' or 'aba';Expand around center;Expand at (i,i) and (i,i+1).;Track best span during expansions.;O(n^2);O(1);https://leetcode.com/problems/longest-palindromic-substring/;String, Two Pointers, Medium, Meta;"def longestPalindrome(s: str) -> str:
+    if not s: return """"
+    L=R=0
+    def exp(l,r):
+        nonlocal L,R
+        while l>=0 and r<len(s) and s[l]==s[r]:
+            if r-l>R-L: L,R=l,r
+            l-=1; r+=1
+    for i in range(len(s)):
+        exp(i,i); exp(i,i+1)
+    return s[L:R+1]";
+Search in Rotated Sorted Array;Search target in rotated sorted array.;// Example: [4,5,6,7,0,1,2], t=0 -> 4;Binary search with side check;Pick sorted half each step.;Compare against nums[l], nums[m], nums[r] to move bounds.;O(log n);O(1);https://leetcode.com/problems/search-in-rotated-sorted-array/;Binary Search, Medium, Meta;"from typing import List
+def search(nums: List[int], target: int) -> int:
+    l,r=0,len(nums)-1
+    while l<=r:
+        m=(l+r)//2
+        if nums[m]==target: return m
+        if nums[l]<=nums[m]:
+            if nums[l]<=target<nums[m]: r=m-1
+            else: l=m+1
+        else:
+            if nums[m]<target<=nums[r]: l=m+1
+            else: r=m-1
+    return -1";
+Find Minimum in Rotated Sorted Array;Find the minimum in a rotated sorted array.;// Example: [3,4,5,1,2] -> 1;Binary search pivot;Use mid vs right to shrink.;If nums[m] > nums[r], l=m+1 else r=m.;O(log n);O(1);https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/;Binary Search, Medium, Meta;"from typing import List
+def findMin(nums: List[int]) -> int:
+    l,r=0,len(nums)-1
+    while l<r:
+        m=(l+r)//2
+        if nums[m]>nums[r]: l=m+1
+        else: r=m
+    return nums[l]";
+Rotate Array;Rotate array right by k steps.;// Example: [1,2,3,4,5,6,7], k=3 -> [5,6,7,1,2,3,4];Reverse trick;Reverse all, reverse first k, reverse rest.;"Compute k%=n; in-place reversals.";O(n);O(1);https://leetcode.com/problems/rotate-array/;Array, Medium, Meta;"from typing import List
+def rotate(nums: List[int], k: int) -> None:
+    n=len(nums); k%=n
+    def rev(i,j):
+        while i<j:
+            nums[i],nums[j]=nums[j],nums[i]; i+=1; j-=1
+    rev(0,n-1); rev(0,k-1); rev(k,n-1)";
+Merge k Sorted Lists;Merge k sorted linked lists.;// Example: [[1,4,5],[1,3,4],[2,6]] -> merged sorted list;Min-heap;"Push heads; pop min; push next.";Use (val, id, node) tuples in heap.;O(N log k);O(k);https://leetcode.com/problems/merge-k-sorted-lists/;Heap, Linked List, Hard, Meta;"import heapq
+class ListNode:
+    def __init__(self,val=0,next=None):
+        self.val,self.next=val,next
+def mergeKLists(lists):
+    h=[]; 
+    for i,node in enumerate(lists):
+        if node: heapq.heappush(h,(node.val,i,node))
+    dummy=tail=ListNode(0)
+    while h:
+        v,i,node=heapq.heappop(h)
+        tail.next=node; tail=tail.next
+        if node.next: heapq.heappush(h,(node.next.val,i,node.next))
+    return dummy.next";
+Top K Frequent Elements;Return k most frequent elements.;// Example: [1,1,1,2,2,3], k=2 -> [1,2];Bucket sort or heap;Group by freq descending.;Bucket by count to achieve O(n) average.;O(n) avg;O(n);https://leetcode.com/problems/top-k-frequent-elements/;Hash Map, Medium, Meta;"from collections import Counter
+from typing import List
+def topKFrequent(nums: List[int], k: int) -> List[int]:
+    cnt=Counter(nums)
+    buckets=[[] for _ in range(len(nums)+1)]
+    for v,c in cnt.items(): buckets[c].append(v)
+    res=[]
+    for f in range(len(buckets)-1,0,-1):
+        for v in buckets[f]:
+            res.append(v)
+            if len(res)==k: return res
+    return res";
+Binary Tree Level Order Traversal;Return level order traversal of a binary tree.;// Example: [3,9,20,null,null,15,7] -> [[3],[9,20],[15,7]];BFS queue;Process by levels.;Queue-based traversal collecting each level's values.;O(n);O(n);https://leetcode.com/problems/binary-tree-level-order-traversal/;Tree, BFS, Medium, Meta;"from collections import deque
+class TreeNode:
+    def __init__(self,val=0,left=None,right=None):
+        self.val,self.left,self.right=val,left,right
+def levelOrder(root):
+    if not root: return []
+    q=deque([root]); res=[]
+    while q:
+        cur=[]
+        for _ in range(len(q)):
+            t=q.popleft(); cur.append(t.val)
+            if t.left: q.append(t.left)
+            if t.right: q.append(t.right)
+        res.append(cur)
+    return res";
+Serialize and Deserialize Binary Tree;Design algorithms to serialize/deserialize a binary tree.;// Example: [1,2,3,null,null,4,5] round-trip;Preorder with nulls;DFS with '#' markers.;"Preorder serialize; recursive deserialize from iterator.";O(n);O(n);https://leetcode.com/problems/serialize-and-deserialize-binary-tree/;Tree, Design, Hard, Meta;"class TreeNode:
+    def __init__(self,val=0,left=None,right=None):
+        self.val,self.left,self.right=val,left,right
+class Codec:
+    def serialize(self, root):
+        out=[]
+        def dfs(x):
+            if not x: out.append('#'); return
+            out.append(str(x.val)); dfs(x.left); dfs(x.right)
+        dfs(root); return ','.join(out)
+    def deserialize(self, data):
+        it=iter(data.split(','))
+        def dfs():
+            v=next(it)
+            if v=='#': return None
+            x=TreeNode(int(v))
+            x.left=dfs(); x.right=dfs(); return x
+        return dfs()";
+Word Ladder;Shortest transformation length from beginWord to endWord using dict words.;// Example: hit→hot→dot→dog→cog length 5;BFS + wildcard map;Neighbors by *-patterns.;"Precompute buckets; BFS from begin.";O(N*L^2);O(N*L);https://leetcode.com/problems/word-ladder/;Graph, BFS, Hard, Meta;"from collections import defaultdict, deque
+def ladderLength(beginWord, endWord, wordList):
+    if endWord not in wordList: return 0
+    L=len(beginWord); mp=defaultdict(list)
+    for w in wordList+[beginWord]:
+        for i in range(L): mp[w[:i]+'*'+w[i+1:]].append(w)
+    q=deque([(beginWord,1)]); vis={beginWord}
+    while q:
+        w,d=q.popleft()
+        if w==endWord: return d
+        for i in range(L):
+            b=w[:i]+'*'+w[i+1:]
+            for nb in mp[b]:
+                if nb not in vis: vis.add(nb); q.append((nb,d+1))
+            mp[b]=[]
+    return 0";
+Minimum Window Substring;Minimum window in s containing all chars of t.;// Example: s='ADOBECODEBANC', t='ABC' -> 'BANC';Sliding window + counts;Expand & shrink with have/need.;"Track have vs needk; update best window when valid.";O(n);O(1);https://leetcode.com/problems/minimum-window-substring/;String, Sliding Window, Hard, Meta;"from collections import Counter
+def minWindow(s,t):
+    need=Counter(t); win=Counter(); have=0; needk=len(need)
+    l=0; best=(0,float('inf'))
+    for r,ch in enumerate(s):
+        win[ch]+=1
+        if ch in need and win[ch]==need[ch]: have+=1
+        while have==needk:
+            if r-l<best[1]-best[0]: best=(l,r)
+            c=s[l]; win[c]-=1
+            if c in need and win[c]<need[c]: have-=1
+            l+=1
+    return """" if best[1]==float('inf') else s[best[0]:best[1]+1]";
+3Sum;All unique triplets summing to zero.;// Example: [-1,0,1,2,-1,-4] -> [[-1,-1,2],[-1,0,1]];Sort + two pointers;"Fix i; two-sum on rest.";Skip duplicates carefully while moving pointers.;O(n^2);O(1);https://leetcode.com/problems/3sum/;Two Pointers, Medium, Meta;"def threeSum(nums):
+    nums.sort(); n=len(nums); res=[]
+    for i,x in enumerate(nums):
+        if i and x==nums[i-1]: continue
+        l,r=i+1,n-1
+        while l<r:
+            s=x+nums[l]+nums[r]
+            if s==0:
+                res.append([x,nums[l],nums[r]])
+                l+=1; r-=1
+                while l<r and nums[l]==nums[l-1]: l+=1
+                while l<r and nums[r]==nums[r+1]: r-=1
+            elif s<0: l+=1
+            else: r-=1
+    return res";
+Product of Array Except Self;Return array where ans[i]=product(nums)/nums[i] w/o division.;// Example: [1,2,3,4] -> [24,12,8,6];Prefix×Suffix;Prefix forward, suffix backward.;Use in-place result with rolling suffix.;O(n);O(1) extra;https://leetcode.com/problems/product-of-array-except-self/;Array, Prefix, Medium, Meta;"def productExceptSelf(nums):
+    n=len(nums); ans=[1]*n
+    for i in range(1,n): ans[i]=ans[i-1]*nums[i-1]
+    suf=1
+    for i in range(n-1,-1,-1):
+        ans[i]*=suf; suf*=nums[i]
+    return ans";
+Valid Anagram;Check if t is an anagram of s.;// Example: 'anagram','nagaram' -> true;Count letters;Compare frequency maps.;Either sort both or count using array/counter.;O(n);O(1) lowercases;https://leetcode.com/problems/valid-anagram/;String, Easy, Meta;"from collections import Counter
+def isAnagram(s,t): return Counter(s)==Counter(t)";
+Group Anagrams;Group strings that are anagrams.;// Example: ['eat','tea','tan','ate','nat','bat'] -> grouped;Hash by signature;Use 26-count tuple as key.;Append into dict list and return values.;O(n*k);O(n*k);https://leetcode.com/problems/group-anagrams/;Hash Map, Medium, Meta;"from collections import defaultdict
+def groupAnagrams(strs):
+    mp=defaultdict(list)
+    for s in strs:
+        key=[0]*26
+        for c in s: key[ord(c)-97]+=1
+        mp[tuple(key)].append(s)
+    return list(mp.values())";
+Insert Interval;Insert and merge a new interval into sorted, non-overlapping list.;// Example: [[1,3],[6,9]] + [2,5] -> [[1,5],[6,9]];One-pass merge;Add befores, merge overlaps, add afters.;Two while-loops (before/after) and a merge loop.;O(n);O(n);https://leetcode.com/problems/insert-interval/;Intervals, Medium, Meta;"def insert(intervals, newInterval):
+    res=[]; i=0; n=len(intervals); s,e=newInterval
+    while i<n and intervals[i][1]<s: res.append(intervals[i]); i+=1
+    while i<n and intervals[i][0]<=e:
+        s=min(s,intervals[i][0]); e=max(e,intervals[i][1]); i+=1
+    res.append([s,e])
+    while i<n: res.append(intervals[i]); i+=1
+    return res";

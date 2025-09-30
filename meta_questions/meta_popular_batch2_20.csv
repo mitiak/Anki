@@ -1,0 +1,278 @@
+Problem Name;Description;Example;Algorithm;Short Solution;Solution;Time Complexity;Space Complexity;Link;Tags;Code;Comments
+Validate Binary Search Tree;Given the root of a binary tree, determine if it is a valid binary search tree (BST). A valid BST is defined as: the left subtree of a node contains only nodes with keys less than the node's key, and the right subtree contains only nodes with keys greater than the node's key. Both the left and right subtrees must also be BSTs.;"// Example
+// root = [2,1,3] -> true
+// root = [5,1,4,null,null,3,6] -> false";DFS with min/max bounds;Carry (low, high) bounds down the recursion.;"Recurse ensuring low < node.val < high at each step; update bounds for left/right; null nodes are valid.";O(n);O(h);https://leetcode.com/problems/validate-binary-search-tree/;Tree, DFS, Meta, Medium;"class TreeNode:
+    def __init__(self,val=0,left=None,right=None):
+        self.val,self.left,self.right=val,left,right
+def isValidBST(root: TreeNode) -> bool:
+    def dfs(node, low, high):
+        if not node: return True
+        if not (low < node.val < high): return False
+        return dfs(node.left, low, node.val) and dfs(node.right, node.val, high)
+    return dfs(root, float('-inf'), float('inf'))";
+Invert Binary Tree;Invert a binary tree by swapping the left and right children of every node.;"// Example
+// [4,2,7,1,3,6,9] -> [4,7,2,9,6,3,1]";DFS (preorder);Swap children recursively.;"Base: null returns; swap left/right; recurse on children.";O(n);O(h);https://leetcode.com/problems/invert-binary-tree/;Tree, DFS, Easy, Meta;"class TreeNode:
+    def __init__(self,val=0,left=None,right=None):
+        self.val,self.left,self.right=val,left,right
+def invertTree(root: TreeNode) -> TreeNode:
+    if not root: return None
+    root.left, root.right = root.right, root.left
+    invertTree(root.left); invertTree(root.right)
+    return root";
+Binary Tree Right Side View;Given the root of a binary tree, imagine standing on the right side of it and return the values of the nodes you can see ordered from top to bottom.;"// Example
+// [1,2,3,null,5,null,4] -> [1,3,4]";BFS by levels;Take the last node at each level.;"Level-order traverse; append value of the last node popped for that layer.";O(n);O(n);https://leetcode.com/problems/binary-tree-right-side-view/;Tree, BFS, Medium, Meta;"from collections import deque
+class TreeNode:
+    def __init__(self,val=0,left=None,right=None):
+        self.val,self.left,self.right=val,left,right
+def rightSideView(root: TreeNode):
+    if not root: return []
+    q=deque([root]); res=[]
+    while q:
+        size=len(q)
+        for i in range(size):
+            node=q.popleft()
+            if node.left: q.append(node.left)
+            if node.right: q.append(node.right)
+            if i==size-1: res.append(node.val)
+    return res";
+Diameter of Binary Tree;Given the root of a binary tree, return the length of the diameter of the tree (the number of edges on the longest path between any two nodes).;"// Example
+// [1,2,3,4,5] -> 3";DFS returning height;Track max left_height + right_height.;"Postorder compute height; update a global diameter with l+r at each node; return 1+max(l,r).";O(n);O(h);https://leetcode.com/problems/diameter-of-binary-tree/;Tree, DFS, Easy, Meta;"class TreeNode:
+    def __init__(self,val=0,left=None,right=None):
+        self.val,self.left,self.right=val,left,right
+def diameterOfBinaryTree(root: TreeNode) -> int:
+    ans=0
+    def h(node):
+        nonlocal ans
+        if not node: return 0
+        L=h(node.left); R=h(node.right)
+        ans=max(ans,L+R)
+        return 1+max(L,R)
+    h(root); return ans";
+Balanced Binary Tree;Given a binary tree, determine if it is height-balanced (the left and right subtrees of every node differ in height by no more than 1).;"// Example
+// [3,9,20,null,null,15,7] -> true";DFS returning height or -inf;Return -1 on imbalance to short-circuit.;"Compute heights bottom-up; if any |L-R|>1 return -1; final >=0 indicates balanced.";O(n);O(h);https://leetcode.com/problems/balanced-binary-tree/;Tree, DFS, Easy, Meta;"class TreeNode:
+    def __init__(self,val=0,left=None,right=None):
+        self.val,self.left,self.right=val,left,right
+def isBalanced(root: TreeNode) -> bool:
+    def h(node):
+        if not node: return 0
+        L=h(node.left); 
+        if L<0: return -1
+        R=h(node.right)
+        if R<0 or abs(L-R)>1: return -1
+        return 1+max(L,R)
+    return h(root) >= 0";
+Kth Smallest Element in a BST;Given the root of a binary search tree and an integer k, return the kth smallest value (1-indexed) in the tree.;"// Example
+// root = [3,1,4,null,2], k=1 -> 1";Inorder traversal;Inorder yields sorted order.;Do iterative inorder and return the k-th popped value.;O(h+k);O(h);https://leetcode.com/problems/kth-smallest-element-in-a-bst/;BST, Stack, Medium, Meta;"class TreeNode:
+    def __init__(self,val=0,left=None,right=None):
+        self.val,self.left,self.right=val,left,right
+def kthSmallest(root: TreeNode, k: int) -> int:
+    st=[]; cur=root
+    while True:
+        while cur: st.append(cur); cur=cur.left
+        cur=st.pop(); k-=1
+        if k==0: return cur.val
+        cur=cur.right";
+Lowest Common Ancestor of a BST;Given a BST, find the lowest common ancestor (LCA) of two nodes p and q.;"// Example
+// BST with nodes (2,8) under 6 -> LCA=6";BST property traversal;Move towards p and q based on values.;"If both p and q less than root, go left; if both greater, go right; else root is LCA.";O(h);O(1);https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/;BST, Tree, Easy, Meta;"class TreeNode:
+    def __init__(self,val=0,left=None,right=None):
+        self.val,self.left,self.right=val,left,right
+def lowestCommonAncestor(root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+    a,b=min(p.val,q.val),max(p.val,q.val)
+    cur=root
+    while cur:
+        if b < cur.val: cur=cur.left
+        elif a > cur.val: cur=cur.right
+        else: return cur";
+Binary Tree Zigzag Level Order Traversal;Given the root of a binary tree, return the zigzag level order traversal of its nodes' values. (i.e., from left to right, then right to left for the next level and alternate between).;"// Example
+// [3,9,20,null,null,15,7] -> [[3],[20,9],[15,7]]";BFS with direction toggle;Reverse list on odd levels or append in reverse order.;"Standard level-order traversal; reverse the current level when needed before appending to the result.";O(n);O(n);https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/;Tree, BFS, Medium, Meta;"from collections import deque
+class TreeNode:
+    def __init__(self,val=0,left=None,right=None):
+        self.val,self.left,self.right=val,left,right
+def zigzagLevelOrder(root: TreeNode):
+    if not root: return []
+    q=deque([root]); res=[]; rev=False
+    while q:
+        cur=[]
+        for _ in range(len(q)):
+            x=q.popleft(); cur.append(x.val)
+            if x.left: q.append(x.left)
+            if x.right: q.append(x.right)
+        if rev: cur.reverse()
+        res.append(cur); rev=not rev
+    return res";
+Construct Binary Tree from Preorder and Inorder Traversal;Given two integer arrays preorder and inorder, construct and return the binary tree.;"// Example
+// preorder=[3,9,20,15,7], inorder=[9,3,15,20,7]";Hash map + recursion;"Root from preorder; split by inorder index.";"Use map of inorder value→index; recurse on segments using preorder pointer.";O(n);O(n);https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/;Tree, Divide and Conquer, Medium, Meta;"class TreeNode:
+    def __init__(self,val=0,left=None,right=None):
+        self.val,self.left,self.right=val,left,right
+def buildTree(preorder, inorder):
+    idx={v:i for i,v in enumerate(inorder)}
+    it=iter(preorder)
+    def rec(l,r):
+        if l>r: return None
+        v=next(it); m=idx[v]
+        node=TreeNode(v)
+        node.left=rec(l,m-1)
+        node.right=rec(m+1,r)
+        return node
+    return rec(0,len(inorder)-1)";
+Implement Trie (Prefix Tree);Design and implement a Trie with insert, search, and startsWith operations.;"// Example
+// insert(""apple""), search(""apple"") -> true, startsWith(""app"") -> true";Tree of hash maps;Each node maps char→child plus end flag.;"Walk/create nodes for insert; for search, walk and check end flag; for startsWith, just walk.";O(L) per op;O(total chars);https://leetcode.com/problems/implement-trie-prefix-tree/;Trie, Design, Medium, Meta;"class TrieNode:
+    def __init__(self):
+        self.ch={} ; self.end=False
+class Trie:
+    def __init__(self):
+        self.root=TrieNode()
+    def insert(self, word: str) -> None:
+        cur=self.root
+        for c in word:
+            cur=cur.ch.setdefault(c,TrieNode())
+        cur.end=True
+    def search(self, word: str) -> bool:
+        cur=self.root
+        for c in word:
+            if c not in cur.ch: return False
+            cur=cur.ch[c]
+        return cur.end
+    def startsWith(self, prefix: str) -> bool:
+        cur=self.root
+        for c in prefix:
+            if c not in cur.ch: return False
+            cur=cur.ch[c]
+        return True";
+Min Stack;Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.;"// Example
+// push(2), push(0), push(3), push(0), getMin()->0, pop(), getMin()->0, pop(), getMin()->0, pop(), getMin()->2";Stack with min tracking;Pair value with current min.;"Each push stores (value, current_min); min is top.min; pop removes top.";O(1) per op;O(n);https://leetcode.com/problems/min-stack/;Stack, Design, Easy, Meta;"class MinStack:
+    def __init__(self):
+        self.st=[]
+    def push(self, val: int) -> None:
+        m = val if not self.st else min(val, self.st[-1][1])
+        self.st.append((val,m))
+    def pop(self) -> None:
+        self.st.pop()
+    def top(self) -> int:
+        return self.st[-1][0]
+    def getMin(self) -> int:
+        return self.st[-1][1]";
+Daily Temperatures;Given a list of daily temperatures T, return a list such that, for each day i, tells you how many days you would have to wait until a warmer temperature. If there is no future day for which this is possible, put 0 instead.;"// Example
+// [73,74,75,71,69,72,76,73] -> [1,1,4,2,1,1,0,0]";Monotonic decreasing stack of indices;Pop while current temperature is higher.;"Maintain indices of decreasing temperatures; for each popped index, answer is i - popped.";O(n);O(n);https://leetcode.com/problems/daily-temperatures/;Monotonic Stack, Array, Medium, Meta;"from typing import List
+def dailyTemperatures(T: List[int]) -> List[int]:
+    res=[0]*len(T)
+    st=[]
+    for i,t in enumerate(T):
+        while st and T[st[-1]]<t:
+            j=st.pop(); res[j]=i-j
+        st.append(i)
+    return res";
+Evaluate Reverse Polish Notation;Evaluate the value of an arithmetic expression in Reverse Polish Notation. Valid operators are +, -, *, /. Each operand may be an integer or another expression.;"// Example
+// [""2"",""1"",""+"",""3"",""*""] -> 9";Stack evaluation;"Push numbers; on operator, pop two and apply.";Use integer truncation toward zero for division per LeetCode spec.;O(n);O(n);https://leetcode.com/problems/evaluate-reverse-polish-notation/;Stack, Math, Medium, Meta;"def evalRPN(tokens) -> int:
+    st=[]
+    for tok in tokens:
+        if tok in '+-*/':
+            b=st.pop(); a=st.pop()
+            if tok=='+': st.append(a+b)
+            elif tok=='-': st.append(a-b)
+            elif tok=='*': st.append(a*b)
+            else: st.append(int(a/b))
+        else:
+            st.append(int(tok))
+    return st[-1]";
+Implement Queue using Stacks;Implement a first in first out (FIFO) queue using only two stacks. The implemented queue should support push, pop, peek, and empty operations.;"// Example
+// push(1), push(2), peek()->1, pop()->1, empty()->false";Two stacks (in/out);Move from in to out when out is empty.;"push to s_in; pop/peek from s_out; if s_out empty, transfer all from s_in to s_out.";O(1) amortized;O(n);https://leetcode.com/problems/implement-queue-using-stacks/;Stack, Design, Easy, Meta;"class MyQueue:
+    def __init__(self):
+        self._in=[]; self._out=[]
+    def push(self, x: int) -> None:
+        self._in.append(x)
+    def _move(self):
+        if not self._out:
+            while self._in:
+                self._out.append(self._in.pop())
+    def pop(self) -> int:
+        self._move(); return self._out.pop()
+    def peek(self) -> int:
+        self._move(); return self._out[-1]
+    def empty(self) -> bool:
+        return not (self._in or self._out)";
+Search Insert Position;Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be inserted in order.;"// Example
+// nums=[1,3,5,6], target=5 -> 2";Binary search (lower_bound);Return leftmost index ≥ target.;Standard binary search that returns l when loop ends.;O(log n);O(1);https://leetcode.com/problems/search-insert-position/;Binary Search, Easy, Meta;"from typing import List
+def searchInsert(nums: List[int], target: int) -> int:
+    l,r=0,len(nums)
+    while l<r:
+        m=(l+r)//2
+        if nums[m] < target: l=m+1
+        else: r=m
+    return l";
+First Bad Version;Given n versions [1..n] and an API isBadVersion(version), find the first bad version which causes all the following ones to be bad.;"// Example
+// versions: .. G G B B B -> return first B index";Binary search boundary;Search smallest index with predicate true.;Classic predicate binary search for first true.;O(log n);O(1);https://leetcode.com/problems/first-bad-version/;Binary Search, Easy, Meta;"# def isBadVersion(version): ... # provided by the judge
+def firstBadVersion(n: int) -> int:
+    l,r=1,n
+    while l<r:
+        m=(l+r)//2
+        if isBadVersion(m): r=m
+        else: l=m+1
+    return l";
+Find First and Last Position of Element in Sorted Array;Given an array of integers nums sorted in non-decreasing order, find the starting and ending position of a given target value. If target is not found in the array, return [-1, -1].;"// Example
+// nums=[5,7,7,8,8,10], target=8 -> [3,4]";Binary search twice;Lower and upper bound searches.;Find leftmost index of target and rightmost (first >target minus one).;O(log n);O(1);https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/;Binary Search, Medium, Meta;"from typing import List
+def searchRange(nums: List[int], target: int) -> List[int]:
+    def lb(x):
+        l,r=0,len(nums)
+        while l<r:
+            m=(l+r)//2
+            if nums[m] < x: l=m+1
+            else: r=m
+        return l
+    l = lb(target)
+    if l==len(nums) or nums[l]!=target: return [-1,-1]
+    r = lb(target+1)-1
+    return [l,r]";
+Find Peak Element;A peak element is an element that is strictly greater than its neighbors. Given an input array nums, find a peak element and return its index. You may imagine that nums[-1] = nums[n] = -∞.;"// Example
+// nums=[1,2,1,3,5,6,4] -> output could be 1 or 5";Binary search by slope;Move to the side of the rising slope.;"While l<r, pick mid; if nums[mid]<nums[mid+1], l=mid+1 else r=mid; return l.";O(log n);O(1);https://leetcode.com/problems/find-peak-element/;Binary Search, Medium, Meta;"from typing import List
+def findPeakElement(nums: List[int]) -> int:
+    l,r=0,len(nums)-1
+    while l<r:
+        m=(l+r)//2
+        if nums[m] < nums[m+1]: l=m+1
+        else: r=m
+    return l";
+Letter Combinations of a Phone Number;Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.;"// Example
+// digits=""23"" -> [""ad"",""ae"",""af"",""bd"",""be"",""bf"",""cd"",""ce"",""cf""]";Backtracking;Build combinations digit by digit.;"Use recursive DFS appending letters per digit mapping; handle empty input as [].";O(4^n * n);O(n);https://leetcode.com/problems/letter-combinations-of-a-phone-number/;Backtracking, String, Medium, Meta;"def letterCombinations(digits: str):
+    if not digits: return []
+    m={'2':'abc','3':'def','4':'ghi','5':'jkl','6':'mno','7':'pqrs','8':'tuv','9':'wxyz'}
+    res=[]
+    def dfs(i, path):
+        if i==len(digits):
+            res.append(''.join(path)); return
+        for ch in m[digits[i]]:
+            path.append(ch); dfs(i+1,path); path.pop()
+    dfs(0, []); return res";
+Generate Parentheses;Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.;"// Example
+// n=3 -> [""((()))"",""(()())"",""(())()"",""()(())"",""()()()""]";Backtracking with counts;Place '(' if open<n and ')' if close<open.;"DFS maintaining counts (open, close) and current string; add when len==2n.";O(Catalan);O(n) per path;https://leetcode.com/problems/generate-parentheses/;Backtracking, String, Medium, Meta;"def generateParenthesis(n: int):
+    res=[]
+    def dfs(opened, closed, path):
+        if opened==n and closed==n:
+            res.append(''.join(path)); return
+        if opened<n:
+            path.append('('); dfs(opened+1, closed, path); path.pop()
+        if closed<opened:
+            path.append(')'); dfs(opened, closed+1, path); path.pop()
+    dfs(0,0,[]); return res";
+Combinations;Given two integers n and k, return all possible combinations of k numbers chosen from the range [1, n].;"// Example
+// n=4, k=2 -> [[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]";Backtracking with pruning;Choose or skip each number, prune when not enough left.;"Use start index; stop when path length == k; prune if n - start + 1 < remaining.";O(C(n,k));O(k);https://leetcode.com/problems/combinations/;Backtracking, Medium, Meta;"def combine(n: int, k: int):
+    res=[]
+    path=[]
+    def dfs(start):
+        if len(path)==k:
+            res.append(path[:]); return
+        # pruning: ensure enough numbers remain
+        for x in range(start, n - (k - len(path)) + 2):
+            path.append(x); dfs(x+1); path.pop()
+    dfs(1); return res";
+Permutations;Given an array nums of distinct integers, return all possible permutations.;"// Example
+// [1,2,3] -> [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]";Backtracking with swapping;Swap current index with each choice and recurse.;"Classic in-place permutation generation; swap back after recursion.";O(n·n!);O(n);https://leetcode.com/problems/permutations/;Backtracking, Medium, Meta;"def permute(nums):
+    res=[]
+    def dfs(i):
+        if i==len(nums):
+            res.append(nums[:]); return
+        for j in range(i,len(nums)):
+            nums[i],nums[j]=nums[j],nums[i]
+            dfs(i+1)
+            nums[i],nums[j]=nums[j],nums[i]
+    dfs(0); return res";

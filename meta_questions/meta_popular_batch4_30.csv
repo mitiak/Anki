@@ -1,0 +1,364 @@
+Problem Name;Description;Example;Algorithm;Short Solution;Solution;Time Complexity;Space Complexity;Link;Tags;Code;Comments
+LRU Cache;Design a data structure that follows the constraints of a Least Recently Used (LRU) cache and supports get/put in O(1).;"// Example
+// put(1,1); put(2,2); get(1)->1; put(3,3); get(2)->-1 (evicted); put(4,4); get(1)->-1; get(3)->3; get(4)->4";Hash map + doubly-linked list;"Map keys to nodes; move node to head on access; evict tail on overflow.";"Maintain a dummy-head/tail doubly linked list storing (key,val). Hash map stores key→node. On get/put, splice nodes to the head; when capacity exceeded, remove tail node and delete from map.";O(1) per op;O(capacity);https://leetcode.com/problems/lru-cache/;Design, Linked List, Hash Map, Medium, Meta;"class Node:
+    def __init__(self, k=0, v=0):
+        self.k, self.v = k, v
+        self.prev = self.next = None
+class LRUCache:
+    def __init__(self, capacity: int):
+        self.cap = capacity
+        self.map = {}
+        self.head = Node()
+        self.tail = Node()
+        self.head.next = self.tail; self.tail.prev = self.head
+    def _remove(self, x):
+        x.prev.next = x.next; x.next.prev = x.prev
+    def _add_front(self, x):
+        x.next = self.head.next; x.prev = self.head
+        self.head.next.prev = x; self.head.next = x
+    def get(self, key: int) -> int:
+        if key not in self.map: return -1
+        x = self.map[key]; self._remove(x); self._add_front(x); return x.v
+    def put(self, key: int, value: int) -> None:
+        if key in self.map:
+            x = self.map[key]; x.v = value
+            self._remove(x); self._add_front(x); return
+        x = Node(key, value); self.map[key] = x; self._add_front(x)
+        if len(self.map) > self.cap:
+            y = self.tail.prev; self._remove(y); self.map.pop(y.k, None)";
+Maximum Subarray;Given an integer array nums, find the contiguous subarray with the largest sum and return its sum.;"// Example
+// nums=[-2,1,-3,4,-1,2,1,-5,4] -> 6  # [4,-1,2,1]";Kadane's algorithm;Track best ending here and global best.;Iterate nums maintaining cur=max(x,cur+x) and ans=max(ans,cur).;O(n);O(1);https://leetcode.com/problems/maximum-subarray/;DP, Array, Easy, Meta;"from typing import List
+def maxSubArray(nums: List[int]) -> int:
+    cur = ans = nums[0]
+    for x in nums[1:]:
+        cur = max(x, cur + x)
+        ans = max(ans, cur)
+    return ans";
+Unique Paths;Given an m x n grid, return the number of unique paths from top-left to bottom-right, moving only down or right.;"// Example
+// m=3, n=7 -> 28";DP combinatorics;Use DP or combinatorial formula C(m+n-2, m-1).;"Dynamic programming: dp[j]+=dp[j-1] while scanning rows; or compute binomial with multiplication to avoid overflow.";O(m*n);O(n);https://leetcode.com/problems/unique-paths/;DP, Grid, Medium, Meta;"def uniquePaths(m: int, n: int) -> int:
+    dp = [1]*n
+    for _ in range(1, m):
+        for j in range(1, n):
+            dp[j] += dp[j-1]
+    return dp[-1]";
+Unique Paths II;An obstacleGrid is given where 1s are obstacles. Count unique paths from top-left to bottom-right moving only down/right.;"// Example
+// [[0,0,0],[0,1,0],[0,0,0]] -> 2";DP with obstacles;"dp[j]=0 on obstacle; else dp[j]+=dp[j-1].";"Initialize first row/col carefully; iterate updating DP while zeroing obstacles.";O(m*n);O(n);https://leetcode.com/problems/unique-paths-ii/;DP, Grid, Medium, Meta;"from typing import List
+def uniquePathsWithObstacles(g: List[List[int]]) -> int:
+    m,n=len(g),len(g[0])
+    dp=[0]*n; dp[0]=1 if g[0][0]==0 else 0
+    for i in range(m):
+        for j in range(n):
+            if g[i][j]==1:
+                dp[j]=0
+            elif j>0:
+                dp[j]+=dp[j-1]
+    return dp[-1]";
+Climbing Stairs;You are climbing a staircase. It takes n steps to reach the top. Each time you can climb 1 or 2 steps. In how many distinct ways can you climb to the top?;"// Example
+// n=5 -> 8";Fibonacci DP;dp[i]=dp[i-1]+dp[i-2].;Iterate from 2..n using two variables to save space.;O(n);O(1);https://leetcode.com/problems/climbing-stairs/;DP, Easy, Meta;"def climbStairs(n: int) -> int:
+    a,b=1,1
+    for _ in range(n): a,b=b,a+b
+    return a";
+House Robber;Given an integer array nums representing the amount of money of each house, return the maximum amount you can rob tonight without alerting the police (no adjacent houses).;"// Example
+// [1,2,3,1] -> 4";DP with two states;Keep rob and skip totals.;"At each house: new_rob=skip+val; new_skip=max(rob,skip). Return max(rob,skip).";O(n);O(1);https://leetcode.com/problems/house-robber/;DP, Medium, Meta;"from typing import List
+def rob(nums: List[int]) -> int:
+    rob=skip=0
+    for x in nums:
+        rob, skip = skip + x, max(rob, skip)
+    return max(rob, skip)";
+House Robber II;Similar to House Robber, but houses are arranged in a circle. Return the maximum amount without robbing adjacent houses.;"// Example
+// [2,3,2] -> 3";DP on two ranges;Rob either [0..n-2] or [1..n-1].;"Compute linear rob DP twice (excluding first or last) and take max; handle n=1 as edge case.";O(n);O(1);https://leetcode.com/problems/house-robber-ii/;DP, Medium, Meta;"from typing import List
+def rob2(nums: List[int]) -> int:
+    if len(nums)==1: return nums[0]
+    def rob_line(a):
+        r=s=0
+        for x in a:
+            r,s = s+x, max(r,s)
+        return max(r,s)
+    return max(rob_line(nums[:-1]), rob_line(nums[1:]))";
+Coin Change;Given coins of different denominations and an amount, compute the fewest number of coins needed. Return -1 if impossible.;"// Example
+// coins=[1,2,5], amount=11 -> 3";Bottom-up DP;dp[i]=min(dp[i], dp[i-c]+1).;"Initialize dp[0]=0 and others INF. For each coin, update dp; or loop i outer and coins inner.";O(amount * len(coins));O(amount);https://leetcode.com/problems/coin-change/;DP, Medium, Meta;"from typing import List
+def coinChange(coins: List[int], amount: int) -> int:
+    INF = 10**9
+    dp = [0] + [INF]*amount
+    for i in range(1, amount+1):
+        for c in coins:
+            if i>=c and dp[i-c]+1<dp[i]:
+                dp[i]=dp[i-c]+1
+    return -1 if dp[amount]>=INF else dp[amount]";
+Min Cost Climbing Stairs;Given an integer array cost where cost[i] is the cost of step i, return the minimum cost to reach the top of the floor (beyond the last index).;"// Example
+// cost=[10,15,20] -> 15";DP with rolling two;dp[i]=cost[i]+min(dp[i-1],dp[i-2]).;Return min of last two dp values since you can end from n-1 or n-2.;O(n);O(1);https://leetcode.com/problems/min-cost-climbing-stairs/;DP, Easy, Meta;"from typing import List
+def minCostClimbingStairs(cost: List[int]) -> int:
+    a=b=0
+    for x in cost:
+        a, b = b, min(a, b) + x
+    return min(a, b)";
+Decode Ways;Given a string s containing only digits, return the number of ways to decode it where 'A'->1, ..., 'Z'->26.;"// Example
+// s='226' -> 3  # 'BZ','VF','BBF'";DP over string;dp[i]=ways up to i using 1-digit and 2-digit checks.;"Use rolling variables prev2, prev1; zero out when s[i]=='0' invalid unless part of 10 or 20.";O(n);O(1);https://leetcode.com/problems/decode-ways/;DP, String, Medium, Meta;"def numDecodings(s: str) -> int:
+    if not s or s[0]=='0': return 0
+    a,b=1,1
+    for i in range(1,len(s)):
+        cur=0
+        if s[i]!='0': cur+=b
+        two=int(s[i-1:i+1])
+        if 10<=two<=26: cur+=a
+        a,b=b,cur
+    return b";
+Longest Increasing Subsequence;Given an integer array nums, return the length of the longest strictly increasing subsequence.;"// Example
+// nums=[10,9,2,5,3,7,101,18] -> 4  # [2,3,7,101]";Patience sorting (tails);Maintain tails where tails[k] is min tail of an LIS of length k+1.;"Binary search position of each x in tails and replace/append accordingly; length of tails is answer.";O(n log n);O(n);https://leetcode.com/problems/longest-increasing-subsequence/;DP, Binary Search, Medium, Meta;"import bisect
+from typing import List
+def lengthOfLIS(nums: List[int]) -> int:
+    tails=[]
+    for x in nums:
+        i = bisect.bisect_left(tails, x)
+        if i==len(tails): tails.append(x)
+        else: tails[i]=x
+    return len(tails)";
+Partition Equal Subset Sum;Given a non-empty array nums, determine if it can be partitioned into two subsets such that the sums are equal.;"// Example
+// [1,5,11,5] -> true";0/1 knap DP (bitset);Compute reachable sums up to total/2.;"Use bitset or boolean array; return True if total even and dp[total//2] reachable.";O(n*sum);O(sum);https://leetcode.com/problems/partition-equal-subset-sum/;DP, Subset Sum, Medium, Meta;"from typing import List
+def canPartition(nums: List[int]) -> bool:
+    s=sum(nums)
+    if s%2: return False
+    target=s//2
+    dp=1  # bitset
+    for x in nums:
+        dp |= dp<<x
+        if (dp>>target)&1: return True
+    return ((dp>>target)&1)==1";
+Target Sum;Given an array nums and a target S, assign + or - to each number to sum to S. Return the number of ways.;"// Example
+// nums=[1,1,1,1,1], S=3 -> 5";Transform to subset sum count;Equivalent to count subsets with sum=(S+total)/2 when feasible.;"Use DP count of subsets achieving sum P; if S unreachable or negative parity, return 0.";O(n*P);O(P);https://leetcode.com/problems/target-sum/;DP, Medium, Meta;"from typing import List
+def findTargetSumWays(nums: List[int], S: int) -> int:
+    tot=sum(nums)
+    if (S+tot)%2 or abs(S)>tot: return 0
+    P=(S+tot)//2
+    dp=[0]*(P+1); dp[0]=1
+    for x in nums:
+        for s in range(P, x-1, -1):
+            dp[s]+=dp[s-x]
+    return dp[P]";
+Jump Game II;Given an array of non-negative integers nums, where each element represents your maximum jump length, return the minimum number of jumps to reach the last index.;"// Example
+// [2,3,1,1,4] -> 2";Greedy BFS by layers;"Expand current reach; when i reaches end of layer, increment jumps.";"Track curr_end and farthest; when i==curr_end, jumps++ and set curr_end=farthest.";O(n);O(1);https://leetcode.com/problems/jump-game-ii/;Greedy, Array, Medium, Meta;"from typing import List
+def jump(nums: List[int]) -> int:
+    jumps=cur_end=far=0
+    for i in range(len(nums)-1):
+        far=max(far, i+nums[i])
+        if i==cur_end:
+            jumps+=1; cur_end=far
+    return jumps";
+Gas Station;Given two integer arrays gas and cost, return the starting gas station's index if you can travel around the circuit once in the clockwise direction, otherwise return -1.;"// Example
+// gas=[1,2,3,4,5], cost=[3,4,5,1,2] -> 3";Greedy single pass;"If total gas<total cost, impossible; otherwise track start where cumulative sum dips.";"Scan net=g-c; reset start to i+1 when running sum becomes negative; return start.";O(n);O(1);https://leetcode.com/problems/gas-station/;Greedy, Array, Medium, Meta;"from typing import List
+def canCompleteCircuit(gas: List[int], cost: List[int]) -> int:
+    if sum(gas)<sum(cost): return -1
+    start=0; cur=0
+    for i,(g,c) in enumerate(zip(gas,cost)):
+        cur += g-c
+        if cur<0:
+            start=i+1; cur=0
+    return start";
+Reorder List;Given a singly linked list L0→L1→…→Ln-1→Ln, reorder it to L0→Ln→L1→Ln-1→L2→Ln-2→….;"// Example
+// [1,2,3,4] -> [1,4,2,3]";Split + reverse + merge;Find middle, reverse second half, merge alternately.;"Use slow/fast to mid; reverse from mid; then interleave nodes from first and second halves.";O(n);O(1);https://leetcode.com/problems/reorder-list/;Linked List, Medium, Meta;"class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val,self.next=val,next
+def reorderList(head: 'ListNode') -> None:
+    if not head or not head.next: return
+    slow=fast=head
+    while fast and fast.next:
+        slow=slow.next; fast=fast.next.next
+    prev=None; cur=slow.next; slow.next=None
+    while cur:
+        nxt=cur.next; cur.next=prev; prev,cur=cur,nxt
+    p,q=head,prev
+    while q:
+        p_next,q_next=p.next,q.next
+        p.next=q; q.next=p_next
+        p,q=p_next,q_next";
+Sort Colors;Given an array nums with n objects colored red, white, or blue (0,1,2), sort them in-place so that objects of the same color are adjacent, in the order 0,1,2.;"// Example
+// [2,0,2,1,1,0] -> [0,0,1,1,2,2]";Dutch National Flag;Three pointers: low, i, high.;"Swap nums[i] with low on 0 and increment both; on 2 swap with high and decrement high; on 1 just i++.";O(n);O(1);https://leetcode.com/problems/sort-colors/;Two Pointers, Array, Medium, Meta;"from typing import List
+def sortColors(nums: List[int]) -> None:
+    low=i=0; high=len(nums)-1
+    while i<=high:
+        if nums[i]==0:
+            nums[low],nums[i]=nums[i],nums[low]; low+=1; i+=1
+        elif nums[i]==2:
+            nums[high],nums[i]=nums[i],nums[high]; high-=1
+        else:
+            i+=1";
+Trapping Rain Water;Given n non-negative integers representing an elevation map, compute how much water it can trap after raining.;"// Example
+// [0,1,0,2,1,0,1,3,2,1,2,1] -> 6";Two-pointer with max-left/right;Move pointer with smaller wall inward updating trapped water.;"Maintain left_max and right_max; if left wall lower, add left_max - height[l] and move l, else symmetric on right.";O(n);O(1);https://leetcode.com/problems/trapping-rain-water/;Two Pointers, Stack, Hard, Meta;"from typing import List
+def trap(h: List[int]) -> int:
+    l,r=0,len(h)-1; lm=rm=0; ans=0
+    while l<r:
+        if h[l] < h[r]:
+            lm = max(lm, h[l]); ans += lm - h[l]; l+=1
+        else:
+            rm = max(rm, h[r]); ans += rm - h[r]; r-=1
+    return ans";
+Maximal Rectangle;Given a binary matrix filled with 0's and 1's, find the largest rectangle containing only 1's and return its area.;"// Example
+// [[""1"",""0"",""1"",""0"",""0""],[""1"",""0"",""1"",""1"",""1""],[""1"",""1"",""1"",""1"",""1""],[""1"",""0"",""0"",""1"",""0""]] -> 6";Histogram + monotonic stack;"Treat each row as histogram of heights; compute largest rectangle in histogram per row.";"Build heights incrementally; for each row apply stack-based largest rectangle algorithm and track max.";O(m*n);O(n);https://leetcode.com/problems/maximal-rectangle/;DP, Monotonic Stack, Hard, Meta;"from typing import List
+def maximalRectangle(matrix: List[List[str]]) -> int:
+    if not matrix: return 0
+    m,n=len(matrix),len(matrix[0])
+    h=[0]*n; ans=0
+    def hist(area):
+        st=[]; best=0
+        for i,x in enumerate(area+[0]):
+            start=i
+            while st and st[-1][1]>x:
+                idx,ht=st.pop()
+                best=max(best, ht*(i-idx))
+                start=idx
+            st.append((start,x))
+        return best
+    for i in range(m):
+        for j in range(n):
+            h[j] = h[j]+1 if matrix[i][j]=='1' else 0
+        ans=max(ans, hist(h))
+    return ans";
+Binary Tree Maximum Path Sum;Given a non-empty binary tree, return the maximum path sum. A path can start and end at any node but must go downwards between parent/children (can turn once).;"// Example
+// [1,2,3] -> 6";DFS returns best down-path;At each node, consider left/right gains≥0 and update global ans with left+node+right.;"Return node.val + max(left_gain, right_gain) for parent use; update ans with through-node sum.";O(n);O(h);https://leetcode.com/problems/binary-tree-maximum-path-sum/;Tree, DFS, Hard, Meta;"class TreeNode:
+    def __init__(self,val=0,left=None,right=None):
+        self.val,self.left,self.right=val,left,right
+def maxPathSum(root: TreeNode) -> int:
+    ans=float('-inf')
+    def dfs(x):
+        nonlocal ans
+        if not x: return 0
+        L=max(0, dfs(x.left)); R=max(0, dfs(x.right))
+        ans=max(ans, x.val + L + R)
+        return x.val + max(L, R)
+    dfs(root); return ans";
+Valid Palindrome;Given a string s, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.;"// Example
+// s = ""A man, a plan, a canal: Panama"" -> true";Two pointers;Filter to alphanumeric and compare ends.;"Advance left/right skipping non-alnum; compare lowercase characters; return true if crossed.";O(n);O(1);https://leetcode.com/problems/valid-palindrome/;String, Two Pointers, Easy, Meta;"def isPalindrome(s: str) -> bool:
+    i,j=0,len(s)-1
+    while i<j:
+        while i<j and not s[i].isalnum(): i+=1
+        while i<j and not s[j].isalnum(): j-=1
+        if s[i].lower()!=s[j].lower(): return False
+        i+=1; j-=1
+    return True";
+Longest Common Subsequence;Given two strings text1 and text2, return the length of their longest common subsequence.;"// Example
+// text1=""abcde"", text2=""ace"" -> 3";2D DP (rolling rows);dp[i][j]=1+dp[i-1][j-1] if equal else max(dp[i-1][j],dp[i][j-1]).;"Use two rows to save space; iterate characters and fill DP table.";O(m*n);O(min(m,n));https://leetcode.com/problems/longest-common-subsequence/;DP, String, Medium, Meta;"def longestCommonSubsequence(a: str, b: str) -> int:
+    if len(b) > len(a): a, b = b, a
+    prev = [0]*(len(b)+1)
+    for ch in a:
+        cur = [0]
+        for j, dj in enumerate(b, 1):
+            if ch == dj: cur.append(prev[j-1]+1)
+            else: cur.append(max(prev[j], cur[-1]))
+        prev = cur
+    return prev[-1]";
+Regular Expression Matching;Implement regular expression matching with support for '.' and '*' where '*' means zero or more of the preceding element.;"// Example
+// s='aab', p='c*a*b' -> true";DP over pattern and text;dp[i][j] whether s[:i] matches p[:j].;"Initialize dp[0][j] for patterns like a*, a*b*, etc.; transitions handle '.' and '*' consuming zero/one+ chars.";O(m*n);O(m*n);https://leetcode.com/problems/regular-expression-matching/;DP, String, Hard, Meta;"def isMatch(s: str, p: str) -> bool:
+    m,n=len(s),len(p)
+    dp=[[False]*(n+1) for _ in range(m+1)]
+    dp[0][0]=True
+    for j in range(2,n+1):
+        if p[j-1]=='*': dp[0][j]=dp[0][j-2]
+    for i in range(1,m+1):
+        for j in range(1,n+1):
+            if p[j-1]=='.' or p[j-1]==s[i-1]:
+                dp[i][j]=dp[i-1][j-1]
+            elif p[j-1]=='*':
+                dp[i][j]=dp[i][j-2] or ((p[j-2]=='.' or p[j-2]==s[i-1]) and dp[i-1][j])
+    return dp[m][n]";
+Median of Two Sorted Arrays;Given two sorted arrays nums1 and nums2 of size m and n, return the median of the two sorted arrays in O(log(m+n)).;"// Example
+// nums1=[1,3], nums2=[2] -> 2.0";Binary search partition;Partition smaller array so left parts size = right parts size and max(left) ≤ min(right).;"Binary search on cut in nums1; compute counterparts in nums2; adjust until valid; then compute median from border values.";O(log(min(m,n)));O(1);https://leetcode.com/problems/median-of-two-sorted-arrays/;Binary Search, Hard, Meta;"from typing import List
+def findMedianSortedArrays(a: List[int], b: List[int]) -> float:
+    if len(a) > len(b): a, b = b, a
+    m, n = len(a), len(b)
+    total_left = (m + n + 1)//2
+    l, r = 0, m
+    import math
+    while l <= r:
+        i = (l + r)//2
+        j = total_left - i
+        aL = a[i-1] if i>0 else -math.inf
+        aR = a[i] if i<m else math.inf
+        bL = b[j-1] if j>0 else -math.inf
+        bR = b[j] if j<n else math.inf
+        if aL <= bR and bL <= aR:
+            if (m+n)%2: return float(max(aL, bL))
+            return (max(aL,bL) + min(aR,bR)) / 2.0
+        elif aL > bR:
+            r = i - 1
+        else:
+            l = i + 1";
+K Closest Points to Origin;Given an array of points where points[i] = [xi, yi], return the k closest points to the origin (0, 0).;"// Example
+// points=[[1,3],[-2,2]], k=1 -> [[-2,2]]";Min-heap or nth_element;Push (dist, point) and pop k times or use nlargest/quickselect.;Here we use heapq.nsmallest to get k points by squared distance.;O(n log k) (heap);O(k);https://leetcode.com/problems/k-closest-points-to-origin/;Heap, Geometry, Medium, Meta;"import heapq
+from typing import List
+def kClosest(points: List[List[int]], k: int) -> List[List[int]]:
+    return heapq.nsmallest(k, points, key=lambda p: p[0]*p[0]+p[1]*p[1])";
+Task Scheduler;Given a characters array tasks, representing the tasks a CPU has to do, where each letter represents a different task. Tasks can be done in any order. Each task takes one unit of time. For each unit of time, the CPU could complete either one task or be idle. However, there is a non-negative integer n that represents the cooldown period between two same tasks. Return the least number of units of time that the CPU will take to finish all the given tasks.;"// Example
+// tasks=[""A"",""A"",""A"",""B"",""B"",""B""], n=2 -> 8";Greedy formula;Compute frame length using most frequent count.;"Let f_max be max frequency and m be count of tasks with f_max; answer = max(len(tasks), (f_max-1)*(n+1)+m).";O(26) ~ O(n);O(1);https://leetcode.com/problems/task-scheduler/;Greedy, Math, Medium, Meta;"from collections import Counter
+from typing import List
+def leastInterval(tasks: List[str], n: int) -> int:
+    cnt = Counter(tasks)
+    fmax = max(cnt.values())
+    m = sum(1 for v in cnt.values() if v == fmax)
+    return max(len(tasks), (fmax - 1) * (n + 1) + m)";
+Course Schedule II;Return one possible order to finish all courses given prerequisites, or an empty array if impossible.;"// Example
+// num=4, prereq=[[1,0],[2,0],[3,1],[3,2]] -> [0,2,1,3] or [0,1,2,3]";Kahn's algorithm (Topo sort);Process zero in-degree nodes, removing edges.;"Build adjacency and in-degrees; BFS through queue; if processed count < numCourses, return [].";O(V+E);O(V+E);https://leetcode.com/problems/course-schedule-ii/;Graph, Topological Sort, Medium, Meta;"from collections import deque, defaultdict
+from typing import List
+def findOrder(numCourses: int, prerequisites: List[List[int]]) -> List[int]:
+    adj=defaultdict(list); indeg=[0]*numCourses
+    for a,b in prerequisites:
+        adj[b].append(a); indeg[a]+=1
+    q=deque([i for i in range(numCourses) if indeg[i]==0])
+    res=[]
+    while q:
+        u=q.popleft(); res.append(u)
+        for v in adj[u]:
+            indeg[v]-=1
+            if indeg[v]==0: q.append(v)
+    return res if len(res)==numCourses else []";
+Pacific Atlantic Water Flow;Given an m x n matrix of heights, return a list of coordinates where water can flow to both the Pacific and Atlantic oceans. Water can flow from a cell to another one with height equal or lower.;"// Example
+// heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]] -> coordinates";Reverse DFS/BFS from borders;Flood from Pacific edges and Atlantic edges and intersect visited sets.;"Start from top/left borders for Pacific and bottom/right for Atlantic; move to neighbors with height ≥ current.";O(m*n);O(m*n);https://leetcode.com/problems/pacific-atlantic-water-flow/;Graph, DFS/BFS, Medium, Meta;"from typing import List, Tuple
+def pacificAtlantic(h: List[List[int]]) -> List[List[int]]:
+    if not h: return []
+    m,n=len(h),len(h[0])
+    def bfs(starts):
+        vis=set(starts); q=list(starts)
+        while q:
+            i,j=q.pop()
+            for di,dj in ((1,0),(-1,0),(0,1),(0,-1)):
+                ni,nj=i+di,j+dj
+                if 0<=ni<m and 0<=nj<n and (ni,nj) not in vis and h[ni][nj]>=h[i][j]:
+                    vis.add((ni,nj)); q.append((ni,nj))
+        return vis
+    pac = bfs([(0,j) for j in range(n)] + [(i,0) for i in range(m)])
+    atl = bfs([(m-1,j) for j in range(n)] + [(i,n-1) for i in range(m)])
+    return [[i,j] for (i,j) in pac & atl]";
+Rotting Oranges;Given a grid of oranges where 0=empty, 1=fresh, 2=rotten, return the minimum number of minutes until no cell has a fresh orange. If impossible, return -1.;"// Example
+// [[2,1,1],[1,1,0],[0,1,1]] -> 4";Multi-source BFS;Start BFS from all rotten oranges and propagate in layers.;"Queue initial rotten positions with time=0; spread to fresh neighbors; track minutes and remaining fresh count.";O(m*n);O(m*n);https://leetcode.com/problems/rotting-oranges/;BFS, Matrix, Medium, Meta;"from collections import deque
+from typing import List
+def orangesRotting(grid: List[List[int]]) -> int:
+    m,n=len(grid),len(grid[0])
+    q=deque(); fresh=0
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j]==2: q.append((i,j,0))
+            elif grid[i][j]==1: fresh+=1
+    t=0
+    while q:
+        i,j,t=q.popleft()
+        for di,dj in ((1,0),(-1,0),(0,1),(0,-1)):
+            ni,nj=i+di,j+dj
+            if 0<=ni<m and 0<=nj<n and grid[ni][nj]==1:
+                grid[ni][nj]=2; fresh-=1
+                q.append((ni,nj,t+1))
+    return -1 if fresh>0 else t";
+Reconstruct Itinerary;Given a list of airline tickets represented as pairs of departure and arrival airports [from, to], reconstruct the itinerary in order. All tickets belong to a man who departs from JFK. If multiple valid itineraries exist, return the one with the smallest lexical order.;"// Example
+// [[""MUC"",""LHR""],[""JFK"",""MUC""],[""SFO"",""SJC""],[""LHR"",""SFO""]] -> [""JFK"",""MUC"",""LHR"",""SFO"",""SJC""]";Hierholzer's algorithm on multigraph;"Use min-heap adjacency; perform DFS postorder to build path.";"Build adjacency lists sorted lexicographically (or use heap); recursively visit edges until dead end; prepend airports to route.";O(E log E);O(E);https://leetcode.com/problems/reconstruct-itinerary/;Graph, Eulerian Path, Hard, Meta;"import heapq
+from collections import defaultdict
+from typing import List
+def findItinerary(tickets: List[List[str]]) -> List[str]:
+    g=defaultdict(list)
+    for a,b in tickets:
+        heapq.heappush(g[a], b)
+    res=[]
+    def dfs(u):
+        while g[u]:
+            v=heapq.heappop(g[u])
+            dfs(v)
+        res.append(u)
+    dfs(""JFK"")
+    return res[::-1]";

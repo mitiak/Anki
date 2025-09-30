@@ -2,7 +2,7 @@ Problem Name;Description;Example;Algorithm;Short Solution;Solution;Time Complexi
 Longest Repeating Character Replacement;Given a string s and an integer k, return the length of the longest substring you can get by replacing at most k characters so that the substring has all the same character.;"Input:
   s = ""AABABBA"", k = 1
 Output:
-  4  # ""AABA"" or ""ABBA""";Sliding Window + Counts;"Maintain counts and max_freq; shrink when window_size - max_freq > k.";Expand right updating char counts and track max_freq in the window. If window length minus max_freq exceeds k, move left to shrink. Track maximum window length.;O(n);O(1) (fixed alphabet);https://leetcode.com/problems/longest-repeating-character-replacement/;Strings, Sliding Window, Medium;"from collections import defaultdict
+  4  # ""AABA"" or ""ABBA""";Sliding Window + Counts;"Maintain counts and max_freq; shrink when window_size - max_freq > k.";Expand right updating char counts and track max_freq in the window. If window length minus max_freq exceeds k, move left to shrink. Track maximum window length.;O(n);O(1) (fixed alphabet);https://leetcode.com/problems/longest-repeating-character-replacement/;strings sliding_window medium;"from collections import defaultdict
 def characterReplacement(s: str, k: int) -> int:
     count = defaultdict(int)
     l = best = maxf = 0
@@ -17,7 +17,7 @@ def characterReplacement(s: str, k: int) -> int:
 Longest Palindromic Substring;Given a string s, return the longest palindromic substring in s.;"Input:
   s = ""babad""
 Output:
-  ""bab""  # or ""aba""";Expand Around Center;Expand from each center (i and i,i+1) and track the max span.;"For each index, expand odd and even centers while ends match to get length; keep best substring boundaries and return it.";O(n^2);O(1);https://leetcode.com/problems/longest-palindromic-substring/;Strings, Two Pointers, Medium;"def longestPalindrome(s: str) -> str:
+  ""bab""  # or ""aba""";Expand Around Center;Expand from each center (i and i,i+1) and track the max span.;"For each index, expand odd and even centers while ends match to get length; keep best substring boundaries and return it.";O(n^2);O(1);https://leetcode.com/problems/longest-palindromic-substring/;strings two_pointers medium;"def longestPalindrome(s: str) -> str:
     if not s: return """"
     start = end = 0
     def expand(l, r):
@@ -35,7 +35,7 @@ Output:
 Palindromic Substrings;Given a string s, return the number of palindromic substrings in it (each single character counts).;"Input:
   s = ""aaa""
 Output:
-  6  # ""a"",""a"",""a"",""aa"",""aa"",""aaa""";Expand Around Center;Expand from each center and count all expansions.;"For each i, expand odd and even centers; increment count for each successful expansion while ends match.";O(n^2);O(1);https://leetcode.com/problems/palindromic-substrings/;Strings, Two Pointers, Medium;"def countSubstrings(s: str) -> int:
+  6  # ""a"",""a"",""a"",""aa"",""aa"",""aaa""";Expand Around Center;Expand from each center and count all expansions.;"For each i, expand odd and even centers; increment count for each successful expansion while ends match.";O(n^2);O(1);https://leetcode.com/problems/palindromic-substrings/;strings two_pointers medium;"def countSubstrings(s: str) -> int:
     n = len(s); ans = 0
     def expand(l, r):
         nonlocal ans
@@ -48,7 +48,7 @@ Output:
 Encode and Decode Strings;Design an algorithm to encode a list of strings into a single string and decode it back. The encoded format must be unambiguous.;"Input:
   strs = [""lint"",""code"",""love"",""you""]
 Output:
-  after decode -> same list";Delimiter with Length Prefix;Use length#string format to handle arbitrary content.;"For encoding, write f""{len(s)}#{s}"" for each string and concatenate. For decoding, parse length up to '#', then slice that many characters and repeat.";O(total characters);O(1) extra (excluding output);https://leetcode.com/problems/encode-and-decode-strings/;String, Design, Medium;"from typing import List
+  after decode -> same list";Delimiter with Length Prefix;Use length#string format to handle arbitrary content.;"For encoding, write f""{len(s)}#{s}"" for each string and concatenate. For decoding, parse length up to '#', then slice that many characters and repeat.";O(total characters);O(1) extra (excluding output);https://leetcode.com/problems/encode-and-decode-strings/;string design medium;"from typing import List
 class Codec:
     def encode(self, strs: List[str]) -> str:
         return ''.join(f""{len(s)}#{s}"" for s in strs)
@@ -65,7 +65,7 @@ class Codec:
 Longest Common Subsequence;Given two strings text1 and text2, return the length of their longest common subsequence.;"Input:
   text1 = ""abcde"", text2 = ""ace""
 Output:
-  3  # ""ace""";Dynamic Programming;2D DP: dp[i][j] = 1 + dp[i-1][j-1] if match else max(dp[i-1][j], dp[i][j-1]).;"Fill a (m+1)x(n+1) DP table bottom-up; return dp[m][n]. Space-optimizable to 2 rows.";O(m*n);O(m*n) → O(min(m,n)) with roll rows;https://leetcode.com/problems/longest-common-subsequence/;DP, Strings, Medium;"def longestCommonSubsequence(a: str, b: str) -> int:
+  3  # ""ace""";Dynamic Programming;2D DP: dp[i][j] = 1 + dp[i-1][j-1] if match else max(dp[i-1][j], dp[i][j-1]).;"Fill a (m+1)x(n+1) DP table bottom-up; return dp[m][n]. Space-optimizable to 2 rows.";O(m*n);O(m*n) → O(min(m,n)) with roll rows;https://leetcode.com/problems/longest-common-subsequence/;dp strings medium;"def longestCommonSubsequence(a: str, b: str) -> int:
     m, n = len(a), len(b)
     dp = [0]*(n+1)
     for i in range(1, m+1):
@@ -81,7 +81,7 @@ Output:
 Word Break;Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated sequence of one or more dictionary words.;"Input:
   s = ""leetcode"", wordDict = [""leet"",""code""]
 Output:
-  true";DP + Hash Set;dp[i]=True if any word length L has dp[i-L] and s[i-L:i] in dict.;"Use boolean dp of length n+1; iterate i and candidate word lengths or words to set dp[i].";O(n * L) (L = total word lengths);O(n);https://leetcode.com/problems/word-break/;DP, String, Medium;"def wordBreak(s: str, wordDict: list[str]) -> bool:
+  true";DP + Hash Set;dp[i]=True if any word length L has dp[i-L] and s[i-L:i] in dict.;"Use boolean dp of length n+1; iterate i and candidate word lengths or words to set dp[i].";O(n * L) (L = total word lengths);O(n);https://leetcode.com/problems/word-break/;dp string medium;"def wordBreak(s: str, wordDict: list[str]) -> bool:
     words = set(wordDict)
     n = len(s)
     maxL = max(map(len, words)) if words else 0
@@ -95,7 +95,7 @@ Output:
 Combination Sum;Given distinct integers candidates and a target, return all unique combinations where chosen numbers sum to target. You may reuse numbers unlimited times.;"Input:
   candidates = [2,3,6,7], target = 7
 Output:
-  [[2,2,3],[7]]";Backtracking;"DFS with index and remaining; choose current candidate repeatedly or skip it.";"Sort candidates; recurse with index i and remaining rem, push candidate and stay at i to allow reuse; when rem==0, record.";O(N * T) approx;O(T) recursion;https://leetcode.com/problems/combination-sum/;Backtracking, DFS, Medium;"from typing import List
+  [[2,2,3],[7]]";Backtracking;"DFS with index and remaining; choose current candidate repeatedly or skip it.";"Sort candidates; recurse with index i and remaining rem, push candidate and stay at i to allow reuse; when rem==0, record.";O(N * T) approx;O(T) recursion;https://leetcode.com/problems/combination-sum/;backtracking dfs medium;"from typing import List
 def combinationSum(candidates: List[int], target: int) -> List[List[int]]:
     candidates.sort()
     res, path = [], []
@@ -115,7 +115,7 @@ def combinationSum(candidates: List[int], target: int) -> List[List[int]]:
 Subsets;Given an integer array nums of unique elements, return all possible subsets (the power set).;"Input:
   nums = [1,2,3]
 Output:
-  [[],[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]";Backtracking / Bitmask;Iterate and branch include/exclude or use bitmask from 0..(1<<n)-1.;"DFS accumulate path; at each index choose to include or not and record at leaves. Bitmask approach is iterative alternative.";O(n * 2^n);O(n) recursion + output;https://leetcode.com/problems/subsets/;Backtracking, DFS, Medium;"from typing import List
+  [[],[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]";Backtracking / Bitmask;Iterate and branch include/exclude or use bitmask from 0..(1<<n)-1.;"DFS accumulate path; at each index choose to include or not and record at leaves. Bitmask approach is iterative alternative.";O(n * 2^n);O(n) recursion + output;https://leetcode.com/problems/subsets/;backtracking dfs medium;"from typing import List
 def subsets(nums: List[int]) -> List[List[int]]:
     res, path = [], []
     def dfs(i):
@@ -130,7 +130,7 @@ def subsets(nums: List[int]) -> List[List[int]]:
 Number of 1 Bits;Write a function that takes an unsigned integer and returns the number of '1' bits (Hamming weight).;"Input:
   n = 00000000000000000000000000001011
 Output:
-  3";Bit Manipulation;Use n &= (n-1) loop to drop the lowest set bit.;"Repeatedly clear the lowest set bit; count how many iterations until n becomes zero.";O(k) (k = number of set bits);O(1);https://leetcode.com/problems/number-of-1-bits/;Bits, Easy;"def hammingWeight(n: int) -> int:
+  3";Bit Manipulation;Use n &= (n-1) loop to drop the lowest set bit.;"Repeatedly clear the lowest set bit; count how many iterations until n becomes zero.";O(k) (k = number of set bits);O(1);https://leetcode.com/problems/number-of-1-bits/;bits easy;"def hammingWeight(n: int) -> int:
     cnt = 0
     while n:
         n &= n - 1
@@ -139,7 +139,7 @@ Output:
 Counting Bits;Given an integer n, return an array ans where ans[i] is the number of 1-bits in the binary representation of i for 0 ≤ i ≤ n.;"Input:
   n = 5
 Output:
-  [0,1,1,2,1,2]";DP on Bits;dp[i] = dp[i >> 1] + (i & 1).;"Use recurrence leveraging right-shift; compute from 1..n reusing prior results.";O(n);O(n);https://leetcode.com/problems/counting-bits/;Bits, DP, Easy;"from typing import List
+  [0,1,1,2,1,2]";DP on Bits;dp[i] = dp[i >> 1] + (i & 1).;"Use recurrence leveraging right-shift; compute from 1..n reusing prior results.";O(n);O(n);https://leetcode.com/problems/counting-bits/;bits dp easy;"from typing import List
 def countBits(n: int) -> List[int]:
     dp = [0]*(n+1)
     for i in range(1, n+1):
@@ -148,7 +148,7 @@ def countBits(n: int) -> List[int]:
 Missing Number;Given an array nums containing n distinct numbers in the range [0, n], return the only number missing from the range.;"Input:
   nums = [3,0,1]
 Output:
-  2";Math (XOR or Sum);Use XOR of indices and values, or formula n*(n+1)/2 - sum(nums).;XOR approach avoids overflow and works in O(1) extra space.;O(n);O(1);https://leetcode.com/problems/missing-number/;Math, Bit Manipulation, Easy;"from typing import List
+  2";Math (XOR or Sum);Use XOR of indices and values, or formula n*(n+1)/2 - sum(nums).;XOR approach avoids overflow and works in O(1) extra space.;O(n);O(1);https://leetcode.com/problems/missing-number/;math bit_manipulation easy;"from typing import List
 def missingNumber(nums: List[int]) -> int:
     x = 0
     for i, v in enumerate(nums):
@@ -157,7 +157,7 @@ def missingNumber(nums: List[int]) -> int:
 Reverse Bits;Reverse bits of a given 32-bit unsigned integer.;"Input:
   n = 00000010100101000001111010011100
 Output:
-  00111001011110000010100101000000";Bit Manipulation;"Shift result left; add least significant bit; shift n right.";"Iterate 32 times, shifting result and n accordingly; return result.";O(1) (32 iterations);O(1);https://leetcode.com/problems/reverse-bits/;Bits, Easy;"def reverseBits(n: int) -> int:
+  00111001011110000010100101000000";Bit Manipulation;"Shift result left; add least significant bit; shift n right.";"Iterate 32 times, shifting result and n accordingly; return result.";O(1) (32 iterations);O(1);https://leetcode.com/problems/reverse-bits/;bits easy;"def reverseBits(n: int) -> int:
     res = 0
     for _ in range(32):
         res = (res << 1) | (n & 1)
@@ -166,7 +166,7 @@ Output:
 Climbing Stairs;You are climbing a staircase. It takes n steps to reach the top. Each time you can climb 1 or 2 steps. In how many distinct ways can you climb to the top?;"Input:
   n = 5
 Output:
-  8";DP / Fibonacci;Iteratively compute fib(n) with two accumulators.;"Use prev2, prev1 rolling variables; add to get next and iterate n-1 times.";O(n);O(1);https://leetcode.com/problems/climbing-stairs/;DP, Easy;"def climbStairs(n: int) -> int:
+  8";DP / Fibonacci;Iteratively compute fib(n) with two accumulators.;"Use prev2, prev1 rolling variables; add to get next and iterate n-1 times.";O(n);O(1);https://leetcode.com/problems/climbing-stairs/;dp easy;"def climbStairs(n: int) -> int:
     if n <= 2: 
         return n
     a, b = 1, 2
@@ -176,7 +176,7 @@ Output:
 House Robber;Given an integer array nums representing money in houses along a street, return the maximum amount you can rob without robbing adjacent houses.;"Input:
   nums = [1,2,3,1]
 Output:
-  4";DP (rolling);dp[i]=max(dp[i-1], dp[i-2]+nums[i]).;"Use two variables: rob and skip; update per house to maintain best including/excluding current.";O(n);O(1);https://leetcode.com/problems/house-robber/;DP, Medium;"from typing import List
+  4";DP (rolling);dp[i]=max(dp[i-1], dp[i-2]+nums[i]).;"Use two variables: rob and skip; update per house to maintain best including/excluding current.";O(n);O(1);https://leetcode.com/problems/house-robber/;dp medium;"from typing import List
 def rob(nums: List[int]) -> int:
     take = skip = 0
     for x in nums:
@@ -185,7 +185,7 @@ def rob(nums: List[int]) -> int:
 House Robber II;"Houses are arranged in a circle; first and last are adjacent. Compute maximum robbed amount without robbing adjacent houses.";"Input:
   nums = [2,3,2]
 Output:
-  3";DP on Two Cases;Max of robbing houses[0..n-2] and houses[1..n-1].;"Apply linear House Robber on two ranges and take maximum; handle small n separately.";O(n);O(1);https://leetcode.com/problems/house-robber-ii/;DP, Medium;"from typing import List
+  3";DP on Two Cases;Max of robbing houses[0..n-2] and houses[1..n-1].;"Apply linear House Robber on two ranges and take maximum; handle small n separately.";O(n);O(1);https://leetcode.com/problems/house-robber-ii/;dp medium;"from typing import List
 def rob2(nums: List[int]) -> int:
     if len(nums) == 1: return nums[0]
     def rob_line(arr):
@@ -197,7 +197,7 @@ def rob2(nums: List[int]) -> int:
 Coin Change;"Given coins of different denominations and a total amount, return the fewest coins needed to make up that amount; return -1 if impossible.";"Input:
   coins = [1,2,5], amount = 11
 Output:
-  3  # 5+5+1";DP (unbounded knapSack);Bottom-up dp[a] = min(dp[a], dp[a - c] + 1).;"Initialize dp with inf except dp[0]=0; iterate amounts and coins to compute minimal coins required.";O(amount * len(coins));O(amount);https://leetcode.com/problems/coin-change/;DP, Medium;"from math import inf
+  3  # 5+5+1";DP (unbounded knapSack);Bottom-up dp[a] = min(dp[a], dp[a - c] + 1).;"Initialize dp with inf except dp[0]=0; iterate amounts and coins to compute minimal coins required.";O(amount * len(coins));O(amount);https://leetcode.com/problems/coin-change/;dp medium;"from math import inf
 from typing import List
 def coinChange(coins: List[int], amount: int) -> int:
     dp = [inf]*(amount+1)
@@ -210,7 +210,7 @@ def coinChange(coins: List[int], amount: int) -> int:
 Partition Equal Subset Sum;Given a non-empty array nums, determine if it can be partitioned into two subsets such that the sums of elements in both subsets are equal.;"Input:
   nums = [1,5,11,5]
 Output:
-  true";DP (subset sum);"Target sum is total//2; use bitset or boolean dp to see if achievable.";"Compute total; if odd return false. Use a boolean set/bitset DP to see if sum target is reachable.";O(n * target);O(target);https://leetcode.com/problems/partition-equal-subset-sum/;DP, Medium;"from typing import List
+  true";DP (subset sum);"Target sum is total//2; use bitset or boolean dp to see if achievable.";"Compute total; if odd return false. Use a boolean set/bitset DP to see if sum target is reachable.";O(n * target);O(target);https://leetcode.com/problems/partition-equal-subset-sum/;dp medium;"from typing import List
 def canPartition(nums: List[int]) -> bool:
     s = sum(nums)
     if s % 2: return False
@@ -222,13 +222,13 @@ def canPartition(nums: List[int]) -> bool:
 Unique Paths;A robot is located at the top-left of an m x n grid and can only move down or right. Return the number of unique paths to the bottom-right.;"Input:
   m = 3, n = 7
 Output:
-  28";Combinatorics / DP;Answer is C(m+n-2, m-1) or DP grid.;Use multiplicative formula for combinations to avoid overflow, or fill DP with rolling row.;O(min(m,n)) (comb) / O(mn) (DP);O(1) (comb) / O(n) (DP);https://leetcode.com/problems/unique-paths/;DP, Math, Medium;"from math import comb
+  28";Combinatorics / DP;Answer is C(m+n-2, m-1) or DP grid.;Use multiplicative formula for combinations to avoid overflow, or fill DP with rolling row.;O(min(m,n)) (comb) / O(mn) (DP);O(1) (comb) / O(n) (DP);https://leetcode.com/problems/unique-paths/;dp math medium;"from math import comb
 def uniquePaths(m: int, n: int) -> int:
     return comb(m+n-2, m-1)";
 Longest Increasing Subsequence;Given an integer array nums, return the length of the longest strictly increasing subsequence.;"Input:
   nums = [10,9,2,5,3,7,101,18]
 Output:
-  4";DP + Binary Search (patience);"Maintain tails array; replace first >= x with x.";"Iterate numbers, binary-search position in tails to place x; length of tails is LIS length.";O(n log n);O(n);https://leetcode.com/problems/longest-increasing-subsequence/;DP, Binary Search, Medium;"from bisect import bisect_left
+  4";DP + Binary Search (patience);"Maintain tails array; replace first >= x with x.";"Iterate numbers, binary-search position in tails to place x; length of tails is LIS length.";O(n log n);O(n);https://leetcode.com/problems/longest-increasing-subsequence/;dp binary_search medium;"from bisect import bisect_left
 from typing import List
 def lengthOfLIS(nums: List[int]) -> int:
     tails = []
@@ -242,7 +242,7 @@ def lengthOfLIS(nums: List[int]) -> int:
 Word Search;Given an m x n board and a word, return true if the word exists in the grid by sequentially adjacent cells (horizontally or vertically), without reusing a cell.;"Input:
   board = [[""A"",""B"",""C"",""E""],[""S"",""F"",""C"",""S""],[""A"",""D"",""E"",""E""]], word = ""ABCCED""
 Output:
-  true";Backtracking + DFS;"DFS from each cell matching first char; mark visited; backtrack on mismatch.";For each cell, recursively explore 4 directions if next letter matches, marking visited temporarily (e.g., set to '#') and restoring upon backtrack.;O(m*n*4^L);O(L) recursion;https://leetcode.com/problems/word-search/;Backtracking, DFS, Medium;"from typing import List
+  true";Backtracking + DFS;"DFS from each cell matching first char; mark visited; backtrack on mismatch.";For each cell, recursively explore 4 directions if next letter matches, marking visited temporarily (e.g., set to '#') and restoring upon backtrack.;O(m*n*4^L);O(L) recursion;https://leetcode.com/problems/word-search/;backtracking dfs medium;"from typing import List
 def exist(board: List[List[str]], word: str) -> bool:
     m, n = len(board), len(board[0])
     def dfs(i, j, k):

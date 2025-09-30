@@ -3,7 +3,7 @@ Two Sum;"Given an integer array nums and an integer target, return the indices o
   nums = [2,7,11,15]
   target = 9
 Output:
-  [0,1]";Hash Map;"Single pass with value→index map; check complement each step.";"Traverse once maintaining value→index in a dict. For each x at i, compute c = target - x; if c already in the dict, return [dict[c], i]; else store x→i and continue.";O(n);O(n);https://leetcode.com/problems/two-sum/;Arrays, Hash Map, Easy;"from typing import List
+  [0,1]";Hash Map;"Single pass with value→index map; check complement each step.";"Traverse once maintaining value→index in a dict. For each x at i, compute c = target - x; if c already in the dict, return [dict[c], i]; else store x→i and continue.";O(n);O(n);https://leetcode.com/problems/two-sum/;arrays hash_map easy;"from typing import List
 def twoSum(nums: List[int], target: int) -> List[int]:
     idx = {}
     for i, x in enumerate(nums):
@@ -15,7 +15,7 @@ def twoSum(nums: List[int], target: int) -> List[int]:
 Valid Anagram;Given two strings s and t, return true if t is an anagram of s, and false otherwise. All characters must be used exactly once.;"Input:
   s = ""anagram"", t = ""nagaram""
 Output:
-  true";Counting / Hash Map;Count letters in both and compare.;"Use a fixed-size array for counts of 'a'..'z' or a dict for general Unicode; increment for s and decrement for t, then verify all zeros.";O(n);O(1) for fixed alphabet (else O(k));https://leetcode.com/problems/valid-anagram/;Strings, Hash Map, Easy;"def isAnagram(s: str, t: str) -> bool:
+  true";Counting / Hash Map;Count letters in both and compare.;"Use a fixed-size array for counts of 'a'..'z' or a dict for general Unicode; increment for s and decrement for t, then verify all zeros.";O(n);O(1) for fixed alphabet (else O(k));https://leetcode.com/problems/valid-anagram/;strings hash_map easy;"def isAnagram(s: str, t: str) -> bool:
     if len(s) != len(t): 
         return False
     cnt = [0]*26
@@ -26,7 +26,7 @@ Output:
 Contains Duplicate;Given an integer array nums, return true if any value appears at least twice, and false if every element is distinct.;"Input:
   nums = [1,2,3,1]
 Output:
-  true";Hash Set;"Insert into a set; early return on repeat.";"Iterate through nums. If x already in a set, return True; otherwise insert it. If loop completes, return False.";O(n);O(n);https://leetcode.com/problems/contains-duplicate/;Arrays, Hash Set, Easy;"from typing import List
+  true";Hash Set;"Insert into a set; early return on repeat.";"Iterate through nums. If x already in a set, return True; otherwise insert it. If loop completes, return False.";O(n);O(n);https://leetcode.com/problems/contains-duplicate/;arrays hash_set easy;"from typing import List
 def containsDuplicate(nums: List[int]) -> bool:
     seen = set()
     for x in nums:
@@ -37,7 +37,7 @@ def containsDuplicate(nums: List[int]) -> bool:
 Product of Array Except Self;Given an integer array nums, return an array answer such that answer[i] is the product of all the elements of nums except nums[i]. Solve without using division in O(n) time.;"Input:
   nums = [1,2,3,4]
 Output:
-  [24,12,8,6]";Prefix/Suffix Products;Left prefix then multiply by right-running suffix.;"Compute prefix products in-place as output. Traverse from right with a suffix accumulator multiplying into output[i]; update suffix *= nums[i].";O(n);O(1) extra (excluding output);https://leetcode.com/problems/product-of-array-except-self/;Arrays, Prefix, Medium;"from typing import List
+  [24,12,8,6]";Prefix/Suffix Products;Left prefix then multiply by right-running suffix.;"Compute prefix products in-place as output. Traverse from right with a suffix accumulator multiplying into output[i]; update suffix *= nums[i].";O(n);O(1) extra (excluding output);https://leetcode.com/problems/product-of-array-except-self/;arrays prefix medium;"from typing import List
 def productExceptSelf(nums: List[int]) -> List[int]:
     n = len(nums)
     out = [1]*n
@@ -51,7 +51,7 @@ def productExceptSelf(nums: List[int]) -> List[int]:
 Maximum Subarray;Given an integer array nums, find the contiguous subarray with the largest sum, and return its sum.;"Input:
   nums = [-2,1,-3,4,-1,2,1,-5,4]
 Output:
-  6  # [4,-1,2,1]";Kadane's Algorithm;"best_ending_here = max(x, best_ending_here + x); track global max.";"Scan once maintaining best_ending_here and best_so_far; reset to current element when extending would be worse.";O(n);O(1);https://leetcode.com/problems/maximum-subarray/;Arrays, DP, Easy;"from typing import List
+  6  # [4,-1,2,1]";Kadane's Algorithm;"best_ending_here = max(x, best_ending_here + x); track global max.";"Scan once maintaining best_ending_here and best_so_far; reset to current element when extending would be worse.";O(n);O(1);https://leetcode.com/problems/maximum-subarray/;arrays dp easy;"from typing import List
 def maxSubArray(nums: List[int]) -> int:
     best = cur = nums[0]
     for x in nums[1:]:
@@ -61,7 +61,7 @@ def maxSubArray(nums: List[int]) -> int:
 Search in Rotated Sorted Array;"Given a rotated sorted array of distinct integers nums and a target, return its index if found; otherwise, return -1.";"Input:
   nums = [4,5,6,7,0,1,2], target = 0
 Output:
-  4";Binary Search (pivot-aware);At each step, decide which half is sorted and binary-search accordingly.;"Compute mid; if nums[left] ≤ nums[mid], left half is sorted—check range and move pointers; else right half is sorted—check and move accordingly.";O(log n);O(1);https://leetcode.com/problems/search-in-rotated-sorted-array/;Binary Search, Medium;"from typing import List
+  4";Binary Search (pivot-aware);At each step, decide which half is sorted and binary-search accordingly.;"Compute mid; if nums[left] ≤ nums[mid], left half is sorted—check range and move pointers; else right half is sorted—check and move accordingly.";O(log n);O(1);https://leetcode.com/problems/search-in-rotated-sorted-array/;binary_search medium;"from typing import List
 def search(nums: List[int], target: int) -> int:
     l, r = 0, len(nums)-1
     while l <= r:
@@ -82,7 +82,7 @@ def search(nums: List[int], target: int) -> int:
 Valid Parentheses;Given a string s containing only '()[]{}', return true if the string is valid: open brackets close by the same type and in correct order.;"Input:
   s = ""()[]{}""
 Output:
-  true";Stack;"Push openers; match and pop on closers; stack empty at end.";"Use a dict of matching pairs. For each char, push openers; on closer check top matches else false; return stack empty.";O(n);O(n);https://leetcode.com/problems/valid-parentheses/;Stack, String, Easy;"def isValid(s: str) -> bool:
+  true";Stack;"Push openers; match and pop on closers; stack empty at end.";"Use a dict of matching pairs. For each char, push openers; on closer check top matches else false; return stack empty.";O(n);O(n);https://leetcode.com/problems/valid-parentheses/;stack string easy;"def isValid(s: str) -> bool:
     pairs = {')':'(', ']':'[', '}':'{'}
     st = []
     for ch in s:
@@ -96,7 +96,7 @@ Output:
 Merge Intervals;Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals and return the result sorted by start time.;"Input:
   intervals = [[1,3],[2,6],[8,10],[15,18]]
 Output:
-  [[1,6],[8,10],[15,18]]";Sort + Sweep;"Sort by start; extend or output when disjoint.";"Sort by start; keep current [s,e]; for [a,b], if a ≤ e extend e = max(e,b) else append [s,e] and start new; finally append last.";O(n log n);O(n) (result);https://leetcode.com/problems/merge-intervals/;Intervals, Sorting, Medium;"from typing import List
+  [[1,6],[8,10],[15,18]]";Sort + Sweep;"Sort by start; extend or output when disjoint.";"Sort by start; keep current [s,e]; for [a,b], if a ≤ e extend e = max(e,b) else append [s,e] and start new; finally append last.";O(n log n);O(n) (result);https://leetcode.com/problems/merge-intervals/;intervals sorting medium;"from typing import List
 def merge(intervals: List[List[int]]) -> List[List[int]]:
     if not intervals: 
         return []
@@ -111,7 +111,7 @@ def merge(intervals: List[List[int]]) -> List[List[int]]:
 Binary Tree Level Order Traversal;Given the root of a binary tree, return the level order traversal of its nodes' values (left to right, level by level).;"Input:
   root = [3,9,20,null,null,15,7]
 Output:
-  [[3],[9,20],[15,7]]";BFS (Queue);"Use a queue; collect per-level values.";"Push root; while queue not empty, process current length as one level, enqueue children, append values list to result.";O(n);O(n);https://leetcode.com/problems/binary-tree-level-order-traversal/;Trees, BFS, Medium;"from collections import deque
+  [[3],[9,20],[15,7]]";BFS (Queue);"Use a queue; collect per-level values.";"Push root; while queue not empty, process current length as one level, enqueue children, append values list to result.";O(n);O(n);https://leetcode.com/problems/binary-tree-level-order-traversal/;trees bfs medium;"from collections import deque
 from typing import Optional, List
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
@@ -132,7 +132,7 @@ def levelOrder(root: Optional[TreeNode]) -> List[List[int]]:
 Minimum Window Substring;Given two strings s and t, return the minimum window substring of s such that every character in t (including multiplicity) is included. If no such substring exists, return an empty string.;"Input:
   s = ""ADOBECODEBANC"", t = ""ABC""
 Output:
-  ""BANC""";Sliding Window + Counts;Expand to satisfy all counts, then shrink while valid to minimize.;Use need=Counter(t), have counts, and a formed counter. Move right to include chars until formed==len(need), then move left dropping extras while updating best window.;O(n + m);O(k) (distinct chars);https://leetcode.com/problems/minimum-window-substring/;Strings, Sliding Window, Hard;"from collections import Counter
+  ""BANC""";Sliding Window + Counts;Expand to satisfy all counts, then shrink while valid to minimize.;Use need=Counter(t), have counts, and a formed counter. Move right to include chars until formed==len(need), then move left dropping extras while updating best window.;O(n + m);O(k) (distinct chars);https://leetcode.com/problems/minimum-window-substring/;strings sliding_window hard;"from collections import Counter
 def minWindow(s: str, t: str) -> str:
     if not t or not s: 
         return """"
@@ -156,7 +156,7 @@ def minWindow(s: str, t: str) -> str:
 Group Anagrams;Given an array of strings strs, group the anagrams together and return the grouped lists in any order.;"Input:
   strs = [""eat"",""tea"",""tan"",""ate"",""nat"",""bat""]
 Output:
-  [[""bat""],[""nat"",""tan""],[""ate"",""eat"",""tea""]] (order may vary)";Hash Map (signature);Map count-signature to list of originals.;"Use a 26-length tuple count as the key for each word and append to a dict list; return dict values.";O(n * k);O(n * k);https://leetcode.com/problems/group-anagrams/;Strings, Hash Map, Medium;"from collections import defaultdict
+  [[""bat""],[""nat"",""tan""],[""ate"",""eat"",""tea""]] (order may vary)";Hash Map (signature);Map count-signature to list of originals.;"Use a 26-length tuple count as the key for each word and append to a dict list; return dict values.";O(n * k);O(n * k);https://leetcode.com/problems/group-anagrams/;strings hash_map medium;"from collections import defaultdict
 from typing import List
 def groupAnagrams(strs: List[str]) -> List[List[str]]:
     groups = defaultdict(list)
@@ -169,7 +169,7 @@ def groupAnagrams(strs: List[str]) -> List[List[str]]:
 Top K Frequent Elements;Given an integer array nums and an integer k, return the k most frequent elements. You may return the answer in any order.;"Input:
   nums = [1,1,1,2,2,3], k = 2
 Output:
-  [1,2]";Counting + Bucket / Heap;"Count with Counter; use bucket sort or heap to get top-k.";"Compute frequencies; either bucket into lists by frequency (O(n)) and collect from high to low, or use a min-heap of size k.";O(n) average (bucket) / O(n log k) (heap);O(n);https://leetcode.com/problems/top-k-frequent-elements/;Heap, Bucket, Medium;"from collections import Counter
+  [1,2]";Counting + Bucket / Heap;"Count with Counter; use bucket sort or heap to get top-k.";"Compute frequencies; either bucket into lists by frequency (O(n)) and collect from high to low, or use a min-heap of size k.";O(n) average (bucket) / O(n log k) (heap);O(n);https://leetcode.com/problems/top-k-frequent-elements/;heap bucket medium;"from collections import Counter
 from typing import List
 def topKFrequent(nums: List[int], k: int) -> List[int]:
     freq = Counter(nums)
@@ -186,7 +186,7 @@ def topKFrequent(nums: List[int], k: int) -> List[int]:
 Valid Palindrome;Given a string s, return true if it is a palindrome, considering only alphanumeric characters and ignoring cases.;"Input:
   s = ""A man, a plan, a canal: Panama""
 Output:
-  true";Two Pointers;"Filter to alnum lowercased; compare with reverse or two-pointer check.";"Use two pointers from both ends advancing past non-alnum; compare lowercased characters.";O(n);O(1);https://leetcode.com/problems/valid-palindrome/;Two Pointers, String, Easy;"def isPalindrome(s: str) -> bool:
+  true";Two Pointers;"Filter to alnum lowercased; compare with reverse or two-pointer check.";"Use two pointers from both ends advancing past non-alnum; compare lowercased characters.";O(n);O(1);https://leetcode.com/problems/valid-palindrome/;two_pointers string easy;"def isPalindrome(s: str) -> bool:
     import string
     l, r = 0, len(s)-1
     while l < r:
@@ -199,7 +199,7 @@ Output:
 3Sum;Given an integer array nums, return all unique triplets [a,b,c] such that a + b + c = 0. Triplets must be unique.;"Input:
   nums = [-1,0,1,2,-1,-4]
 Output:
-  [[-1,-1,2],[-1,0,1]] (order may vary)";Sorting + Two Pointers;"Sort; fix i, two-pointer j/k skipping duplicates.";Sort ascending. For each i, two-pointer search j,k for -nums[i] while skipping duplicates to avoid repeated triplets.;O(n^2);O(1) extra (excluding output);https://leetcode.com/problems/3sum/;Arrays, Two Pointers, Medium;"from typing import List
+  [[-1,-1,2],[-1,0,1]] (order may vary)";Sorting + Two Pointers;"Sort; fix i, two-pointer j/k skipping duplicates.";Sort ascending. For each i, two-pointer search j,k for -nums[i] while skipping duplicates to avoid repeated triplets.;O(n^2);O(1) extra (excluding output);https://leetcode.com/problems/3sum/;arrays two_pointers medium;"from typing import List
 def threeSum(nums: List[int]) -> List[List[int]]:
     nums.sort()
     res = []
@@ -223,7 +223,7 @@ def threeSum(nums: List[int]) -> List[List[int]]:
 Container With Most Water;Given n non-negative integers representing vertical lines on the x-axis, find two lines that, together with the x-axis, form a container that holds the most water.;"Input:
   height = [1,8,6,2,5,4,8,3,7]
 Output:
-  49";Two Pointers;Move the shorter side inward to try for a taller boundary.;"Use l,r pointers; at each step compute area and move the pointer at the shorter height inward to potentially increase area.";O(n);O(1);https://leetcode.com/problems/container-with-most-water/;Two Pointers, Greedy, Medium;"from typing import List
+  49";Two Pointers;Move the shorter side inward to try for a taller boundary.;"Use l,r pointers; at each step compute area and move the pointer at the shorter height inward to potentially increase area.";O(n);O(1);https://leetcode.com/problems/container-with-most-water/;two_pointers greedy medium;"from typing import List
 def maxArea(height: List[int]) -> int:
     l, r = 0, len(height)-1
     best = 0
@@ -237,7 +237,7 @@ def maxArea(height: List[int]) -> int:
 Trapping Rain Water;Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.;"Input:
   height = [0,1,0,2,1,0,1,3,2,1,2,1]
 Output:
-  6";Two Pointers / Prefix Max;Maintain left_max/right_max and accumulate trapped water.;"Use two pointers from both ends; update left_max/right_max and add water where current bar is lower than the respective max.";O(n);O(1);https://leetcode.com/problems/trapping-rain-water/;Two Pointers, DP, Hard;"from typing import List
+  6";Two Pointers / Prefix Max;Maintain left_max/right_max and accumulate trapped water.;"Use two pointers from both ends; update left_max/right_max and add water where current bar is lower than the respective max.";O(n);O(1);https://leetcode.com/problems/trapping-rain-water/;two_pointers dp hard;"from typing import List
 def trap(height: List[int]) -> int:
     l, r = 0, len(height)-1
     left_max = right_max = 0
@@ -259,7 +259,7 @@ def trap(height: List[int]) -> int:
 Binary Search;"Given a sorted array of integers nums and a target value, return the index if found; otherwise return -1.";"Input:
   nums = [-1,0,3,5,9,12], target = 9
 Output:
-  4";Binary Search;Classic binary search with l,r and mid loop.;"Maintain l,r bounds; while l ≤ r, compute mid and compare; move bounds toward target until found or exhausted.";O(log n);O(1);https://leetcode.com/problems/binary-search/;Binary Search, Easy;"from typing import List
+  4";Binary Search;Classic binary search with l,r and mid loop.;"Maintain l,r bounds; while l ≤ r, compute mid and compare; move bounds toward target until found or exhausted.";O(log n);O(1);https://leetcode.com/problems/binary-search/;binary_search easy;"from typing import List
 def search_binary(nums: List[int], target: int) -> int:
     l, r = 0, len(nums)-1
     while l <= r:
@@ -274,7 +274,7 @@ def search_binary(nums: List[int], target: int) -> int:
 Find Minimum in Rotated Sorted Array;Given the rotated sorted array nums of unique elements, return the minimum element.;"Input:
   nums = [3,4,5,1,2]
 Output:
-  1";Binary Search (pivot);"Compare mid to right; move toward unsorted side.";"Binary search: if nums[m] > nums[r], min on right; else on left; shrink until l == r, which is the min.";O(log n);O(1);https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/;Binary Search, Medium;"from typing import List
+  1";Binary Search (pivot);"Compare mid to right; move toward unsorted side.";"Binary search: if nums[m] > nums[r], min on right; else on left; shrink until l == r, which is the min.";O(log n);O(1);https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/;binary_search medium;"from typing import List
 def findMin(nums: List[int]) -> int:
     l, r = 0, len(nums)-1
     while l < r:
@@ -287,7 +287,7 @@ def findMin(nums: List[int]) -> int:
 Koko Eating Bananas;Given piles of bananas and h hours, return the minimum integer speed k such that Koko can eat all bananas within h hours.;"Input:
   piles = [3,6,7,11], h = 8
 Output:
-  4";Binary Search on Answer;"Binary search k; check total hours sum(ceil(p/k)) ≤ h.";"Search k in [1, max(piles)]. For a candidate k, compute hours needed; shrink range accordingly to find minimal feasible k.";O(n log max(p));O(1);https://leetcode.com/problems/koko-eating-bananas/;Binary Search, Medium;"from math import ceil
+  4";Binary Search on Answer;"Binary search k; check total hours sum(ceil(p/k)) ≤ h.";"Search k in [1, max(piles)]. For a candidate k, compute hours needed; shrink range accordingly to find minimal feasible k.";O(n log max(p));O(1);https://leetcode.com/problems/koko-eating-bananas/;binary_search medium;"from math import ceil
 from typing import List
 def minEatingSpeed(piles: List[int], h: int) -> int:
     l, r = 1, max(piles)
@@ -302,7 +302,7 @@ def minEatingSpeed(piles: List[int], h: int) -> int:
 Longest Substring Without Repeating Characters;Given a string s, find the length of the longest substring without repeating characters.;"Input:
   s = ""abcabcbb""
 Output:
-  3  # ""abc""";Sliding Window;"Extend right; move left past last seen index of duplicates.";"Maintain a dict last index for each char, expand right; when duplicate seen, set left = max(left, last[ch]+1); update best length.";O(n);O(min(n, charset));https://leetcode.com/problems/longest-substring-without-repeating-characters/;Strings, Sliding Window, Medium;"def lengthOfLongestSubstring(s: str) -> int:
+  3  # ""abc""";Sliding Window;"Extend right; move left past last seen index of duplicates.";"Maintain a dict last index for each char, expand right; when duplicate seen, set left = max(left, last[ch]+1); update best length.";O(n);O(min(n, charset));https://leetcode.com/problems/longest-substring-without-repeating-characters/;strings sliding_window medium;"def lengthOfLongestSubstring(s: str) -> int:
     last = {}
     left = best = 0
     for r, ch in enumerate(s):

@@ -2,7 +2,7 @@ Problem Name;Description;Example;Algorithm;Short Solution;Solution;Time Complexi
 Best Time to Buy and Sell Stock;Given an array prices where prices[i] is the price of a stock on the ith day, return the maximum profit you can achieve from a single buy and a single sell. If no profit is possible, return 0.;"Input:
   prices = [7,1,5,3,6,4]
 Output:
-  5  # buy at 1, sell at 6";One Pass (track min);"Track running minimum price; update best profit with price - min_so_far.";"Scan once keeping min_so_far and best; at each price p, min_so_far=min(min_so_far,p) and best=max(best,p-min_so_far).";O(n);O(1);https://leetcode.com/problems/best-time-to-buy-and-sell-stock/;Greedy, Array, Easy;"from typing import List
+  5  # buy at 1, sell at 6";One Pass (track min);"Track running minimum price; update best profit with price - min_so_far.";"Scan once keeping min_so_far and best; at each price p, min_so_far=min(min_so_far,p) and best=max(best,p-min_so_far).";O(n);O(1);https://leetcode.com/problems/best-time-to-buy-and-sell-stock/;greedy array easy;"from typing import List
 def maxProfit(prices: List[int]) -> int:
     best = 0; mn = 10**9
     for p in prices:
@@ -12,13 +12,13 @@ def maxProfit(prices: List[int]) -> int:
 Best Time to Buy and Sell Stock II;You may complete as many transactions as you like (buy one and sell one share of the stock multiple times). Find the maximum profit.;"Input:
   prices = [7,1,5,3,6,4]
 Output:
-  7  # (5-1)+(6-3)";Greedy (sum positive diffs);Sum all positive day-to-day increases.;Accumulate max(0, prices[i]-prices[i-1]) over i to capture every ascent.;O(n);O(1);https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/;Greedy, Array, Medium;"from typing import List
+  7  # (5-1)+(6-3)";Greedy (sum positive diffs);Sum all positive day-to-day increases.;Accumulate max(0, prices[i]-prices[i-1]) over i to capture every ascent.;O(n);O(1);https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/;greedy array medium;"from typing import List
 def maxProfit2(prices: List[int]) -> int:
     return sum(max(0, b - a) for a, b in zip(prices, prices[1:]))";
 Best Time to Buy and Sell Stock III;At most two transactions are allowed. Return the maximum profit.;"Input:
   prices = [3,3,5,0,0,3,1,4]
 Output:
-  6";DP with 4 states;Maintain buy1,sell1,buy2,sell2 and update in one pass.;"buy1=min(buy1,p), sell1=max(sell1,p-buy1); buy2=min(buy2,p-sell1), sell2=max(sell2,p-buy2).";O(n);O(1);https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/;DP, Greedy, Hard;"from typing import List
+  6";DP with 4 states;Maintain buy1,sell1,buy2,sell2 and update in one pass.;"buy1=min(buy1,p), sell1=max(sell1,p-buy1); buy2=min(buy2,p-sell1), sell2=max(sell2,p-buy2).";O(n);O(1);https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/;dp greedy hard;"from typing import List
 def maxProfit3(prices: List[int]) -> int:
     import math
     buy1 = buy2 = math.inf
@@ -32,7 +32,7 @@ def maxProfit3(prices: List[int]) -> int:
 Best Time to Buy and Sell Stock with Cooldown;You may complete as many transactions as you like with a cooldown of one day after selling. Return the maximum profit.;"Input:
   prices = [1,2,3,0,2]
 Output:
-  3";DP on states (hold/sold/rest);Transition between hold, sold, and rest states per day.;"hold = max(hold, rest - p); sold = hold_prev + p; rest = max(rest, sold_prev).";O(n);O(1);https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/;DP, Medium;"from typing import List
+  3";DP on states (hold/sold/rest);Transition between hold, sold, and rest states per day.;"hold = max(hold, rest - p); sold = hold_prev + p; rest = max(rest, sold_prev).";O(n);O(1);https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/;dp medium;"from typing import List
 def maxProfit_cooldown(prices: List[int]) -> int:
     hold = -10**9; sold = 0; rest = 0
     for p in prices:
@@ -44,7 +44,7 @@ def maxProfit_cooldown(prices: List[int]) -> int:
 Best Time to Buy and Sell Stock with Transaction Fee;Return max profit with any number of transactions where each sell incurs a fee.;"Input:
   prices = [1,3,2,8,4,9], fee = 2
 Output:
-  8";DP (hold/cash);"cash=max(cash, hold+p-fee); hold=max(hold, cash-p).";Standard two-state DP representing not holding (cash) and holding a stock (hold).;O(n);O(1);https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/;DP, Greedy, Medium;"from typing import List
+  8";DP (hold/cash);"cash=max(cash, hold+p-fee); hold=max(hold, cash-p).";Standard two-state DP representing not holding (cash) and holding a stock (hold).;O(n);O(1);https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/;dp greedy medium;"from typing import List
 def maxProfit_fee(prices: List[int], fee: int) -> int:
     cash, hold = 0, -10**9
     for p in prices:
@@ -54,7 +54,7 @@ def maxProfit_fee(prices: List[int], fee: int) -> int:
 Jump Game;Given an array of non-negative integers nums where each element represents your maximum jump length, determine if you can reach the last index.;"Input:
   nums = [2,3,1,1,4]
 Output:
-  true";Greedy farthest reach;"Maintain farthest index reachable; ensure i never surpasses farthest.";"Update far=max(far, i+nums[i]) while i≤far; success if far ≥ last index.";O(n);O(1);https://leetcode.com/problems/jump-game/;Greedy, Array, Medium;"from typing import List
+  true";Greedy farthest reach;"Maintain farthest index reachable; ensure i never surpasses farthest.";"Update far=max(far, i+nums[i]) while i≤far; success if far ≥ last index.";O(n);O(1);https://leetcode.com/problems/jump-game/;greedy array medium;"from typing import List
 def canJump(nums: List[int]) -> bool:
     far = 0
     for i, x in enumerate(nums):
@@ -64,7 +64,7 @@ def canJump(nums: List[int]) -> bool:
 Maximum Product Subarray;Given an integer array nums, find a contiguous non-empty subarray within the array that has the largest product.;"Input:
   nums = [2,3,-2,4]
 Output:
-  6";Track max/min ending here;Swap on negative, update max_prod and min_prod.;"Keep cur_max and cur_min; for x<0 swap them; cur_max=max(x,cur_max*x); cur_min=min(x,cur_min*x).";O(n);O(1);https://leetcode.com/problems/maximum-product-subarray/;DP, Array, Medium;"from typing import List
+  6";Track max/min ending here;Swap on negative, update max_prod and min_prod.;"Keep cur_max and cur_min; for x<0 swap them; cur_max=max(x,cur_max*x); cur_min=min(x,cur_min*x).";O(n);O(1);https://leetcode.com/problems/maximum-product-subarray/;dp array medium;"from typing import List
 def maxProduct(nums: List[int]) -> int:
     cur_max = cur_min = ans = nums[0]
     for x in nums[1:]:
@@ -76,7 +76,7 @@ def maxProduct(nums: List[int]) -> int:
 Maximal Square;Given a binary matrix filled with '0' and '1', find the largest square containing only 1's and return its area.;"Input:
   matrix = [[""1"",""0"",""1"",""0"",""0""],[""1"",""0"",""1"",""1"",""1""],[""1"",""1"",""1"",""1"",""1""],[""1"",""0"",""0"",""1"",""0""]]
 Output:
-  4";DP (1D);"dp[j]=min(top,left,top-left)+1 when cell is 1; track max side.";Roll a 1D array with prev_diag to compute square sizes efficiently.;O(m*n);O(n);https://leetcode.com/problems/maximal-square/;DP, Matrix, Medium;"from typing import List
+  4";DP (1D);"dp[j]=min(top,left,top-left)+1 when cell is 1; track max side.";Roll a 1D array with prev_diag to compute square sizes efficiently.;O(m*n);O(n);https://leetcode.com/problems/maximal-square/;dp matrix medium;"from typing import List
 def maximalSquare(matrix: List[List[str]]) -> int:
     if not matrix: return 0
     m, n = len(matrix), len(matrix[0])
@@ -96,7 +96,7 @@ def maximalSquare(matrix: List[List[str]]) -> int:
 Word Ladder;Given two words beginWord and endWord, and a dictionary wordList, return the length of the shortest transformation sequence from beginWord to endWord (one letter per step, each intermediate word must exist).;"Input:
   beginWord = ""hit"", endWord = ""cog"", wordList = [""hot"",""dot"",""dog"",""lot"",""log"",""cog""]
 Output:
-  5  # hit→hot→dot→dog→cog";BFS with pattern map;Precompute wildcards (e.g., h*t) → words, then BFS.;"For each popped word, expand neighbors via pattern map; mark visited to avoid repeats.";O(N * L^2);O(N * L);https://leetcode.com/problems/word-ladder/;BFS, Graph, Hard;"from collections import defaultdict, deque
+  5  # hit→hot→dot→dog→cog";BFS with pattern map;Precompute wildcards (e.g., h*t) → words, then BFS.;"For each popped word, expand neighbors via pattern map; mark visited to avoid repeats.";O(N * L^2);O(N * L);https://leetcode.com/problems/word-ladder/;bfs graph hard;"from collections import defaultdict, deque
 from typing import List
 def ladderLength(beginWord: str, endWord: str, wordList: List[str]) -> int:
     if endWord not in wordList: return 0
@@ -119,7 +119,7 @@ def ladderLength(beginWord: str, endWord: str, wordList: List[str]) -> int:
 Network Delay Time;You are given a directed weighted graph times where times[i] = [u, v, w]. Return the time for all nodes to receive the signal sent from node k. If impossible, return -1.;"Input:
   n = 4, times = [[2,1,1],[2,3,1],[3,4,1]], k = 2
 Output:
-  2";Dijkstra (min-heap);"Run Dijkstra from source; answer is max distance if all reachable.";Use adjacency list and heap of (dist,node).;O(E log V);O(E);https://leetcode.com/problems/network-delay-time/;Graph, Dijkstra, Medium;"import heapq
+  2";Dijkstra (min-heap);"Run Dijkstra from source; answer is max distance if all reachable.";Use adjacency list and heap of (dist,node).;O(E log V);O(E);https://leetcode.com/problems/network-delay-time/;graph dijkstra medium;"import heapq
 from collections import defaultdict
 from typing import List
 def networkDelayTime(times: List[List[int]], n: int, k: int) -> int:
@@ -141,7 +141,7 @@ def networkDelayTime(times: List[List[int]], n: int, k: int) -> int:
 Cheapest Flights Within K Stops;Given flights as edges (u,v,price), find the cheapest price from src to dst with at most K stops. If no such route, return -1.;"Input:
   n=3, flights=[[0,1,100],[1,2,100],[0,2,500]], src=0, dst=2, K=1
 Output:
-  200";Bellman-Ford (K+1 relaxations);Relax edges K+1 times from src using previous iteration distances.;Use two arrays prev and cur to ensure at most K stops.;O(K*E);O(V);https://leetcode.com/problems/cheapest-flights-within-k-stops/;DP, Graph, Medium;"from typing import List
+  200";Bellman-Ford (K+1 relaxations);Relax edges K+1 times from src using previous iteration distances.;Use two arrays prev and cur to ensure at most K stops.;O(K*E);O(V);https://leetcode.com/problems/cheapest-flights-within-k-stops/;dp graph medium;"from typing import List
 def findCheapestPrice(n: int, flights: List[List[int]], src: int, dst: int, k: int) -> int:
     INF = 10**9
     dist = [INF]*n
@@ -156,7 +156,7 @@ def findCheapestPrice(n: int, flights: List[List[int]], src: int, dst: int, k: i
 Redundant Connection;In a tree with one extra edge added, return the edge that can be removed to make it a tree again.;"Input:
   edges = [[1,2],[1,3],[2,3]]
 Output:
-  [2,3]";Union-Find (DSU);"Union edges; the first that joins two nodes already connected is redundant.";Standard DSU with path compression and union by rank.;O(n α(n));O(n);https://leetcode.com/problems/redundant-connection/;Union Find, Graph, Medium;"from typing import List
+  [2,3]";Union-Find (DSU);"Union edges; the first that joins two nodes already connected is redundant.";Standard DSU with path compression and union by rank.;O(n α(n));O(n);https://leetcode.com/problems/redundant-connection/;union_find graph medium;"from typing import List
 def findRedundantConnection(edges: List[List[int]]) -> List[int]:
     n = len(edges)
     parent = list(range(n+1))
@@ -180,7 +180,7 @@ def findRedundantConnection(edges: List[List[int]]) -> List[int]:
 Number of Provinces;Given an adjacency matrix isConnected where isConnected[i][j] = 1 if the ith and jth cities are directly connected, return the number of provinces.;"Input:
   isConnected = [[1,1,0],[1,1,0],[0,0,1]]
 Output:
-  2";Union-Find or DFS;"Union all edges isConnected[i][j]==1; count roots.";Either DFS from each unvisited node or DSU to count components.;O(n^2);O(n);https://leetcode.com/problems/number-of-provinces/;Union Find, Graph, Medium;"from typing import List
+  2";Union-Find or DFS;"Union all edges isConnected[i][j]==1; count roots.";Either DFS from each unvisited node or DSU to count components.;O(n^2);O(n);https://leetcode.com/problems/number-of-provinces/;union_find graph medium;"from typing import List
 def findCircleNum(M: List[List[int]]) -> int:
     n = len(M)
     parent = list(range(n))
@@ -200,7 +200,7 @@ def findCircleNum(M: List[List[int]]) -> int:
 Accounts Merge;Given a list of accounts where each account is a name and emails, merge accounts with any common email and return merged accounts with unique emails sorted.;"Input:
   [[""John"",""johnsmith@mail.com"",""john00@mail.com""],[""John"",""johnnybravo@mail.com""],[""John"",""johnsmith@mail.com"",""john_newyork@mail.com""],[""Mary"",""mary@mail.com""]]
 Output:
-  [[""John"", 'john00@mail.com', 'john_newyork@mail.com', 'johnsmith@mail.com'], [""John"", 'johnnybravo@mail.com'], [""Mary"", 'mary@mail.com']]";Union-Find by email;"Union emails within the same account; group by root and attach name.";"Map email→id; DSU unions within accounts; then gather components and sort emails.";O(N α(N) + total_emails log E);O(E);https://leetcode.com/problems/accounts-merge/;Union Find, Hash Map, Medium;"from collections import defaultdict
+  [[""John"", 'john00@mail.com', 'john_newyork@mail.com', 'johnsmith@mail.com'], [""John"", 'johnnybravo@mail.com'], [""Mary"", 'mary@mail.com']]";Union-Find by email;"Union emails within the same account; group by root and attach name.";"Map email→id; DSU unions within accounts; then gather components and sort emails.";O(N α(N) + total_emails log E);O(E);https://leetcode.com/problems/accounts-merge/;union_find hash_map medium;"from collections import defaultdict
 from typing import List
 def accountsMerge(accounts: List[List[str]]) -> List[List[str]]:
     parent = {}
@@ -224,7 +224,7 @@ def accountsMerge(accounts: List[List[str]]) -> List[List[str]]:
 Decode String;"Given an encoded string with the rule k[encoded_string], return the decoded string. k is a positive integer; patterns may be nested.";"Input:
   s = ""3[a2[c]]""
 Output:
-  ""accaccacc""";Stack (counts and partial strings);"Push current string and count on '['; on ']', pop and repeat.";"Parse digits to build count; accumulate characters; handle nesting with stacks.";O(n);O(n);https://leetcode.com/problems/decode-string/;Stack, String, Medium;"def decodeString(s: str) -> str:
+  ""accaccacc""";Stack (counts and partial strings);"Push current string and count on '['; on ']', pop and repeat.";"Parse digits to build count; accumulate characters; handle nesting with stacks.";O(n);O(n);https://leetcode.com/problems/decode-string/;stack string medium;"def decodeString(s: str) -> str:
     st = []
     cur = """"
     k = 0
@@ -243,7 +243,7 @@ Output:
 Maximum Depth of Binary Tree;Given the root of a binary tree, return its maximum depth (length of the longest path from root to leaf).;"Input:
   root = [3,9,20,null,null,15,7]
 Output:
-  3";DFS (height);Depth = 1 + max(depth(left), depth(right)).;"Recurse returning height; base on null = 0.";O(n);O(h);https://leetcode.com/problems/maximum-depth-of-binary-tree/;Trees, DFS, Easy;"from typing import Optional
+  3";DFS (height);Depth = 1 + max(depth(left), depth(right)).;"Recurse returning height; base on null = 0.";O(n);O(h);https://leetcode.com/problems/maximum-depth-of-binary-tree/;trees dfs easy;"from typing import Optional
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val, self.left, self.right = val, left, right
@@ -253,7 +253,7 @@ def maxDepth(root: Optional[TreeNode]) -> int:
 Same Tree;Given two binary trees p and q, check if they are structurally identical and the nodes have the same values.;"Input:
   p = [1,2,3], q = [1,2,3]
 Output:
-  true";DFS compare;"Both null → true; one null → false; else values equal and recurse on children.";Straightforward recursion or iterative stack/queue.;O(n);O(h);https://leetcode.com/problems/same-tree/;Trees, DFS, Easy;"from typing import Optional
+  true";DFS compare;"Both null → true; one null → false; else values equal and recurse on children.";Straightforward recursion or iterative stack/queue.;O(n);O(h);https://leetcode.com/problems/same-tree/;trees dfs easy;"from typing import Optional
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val, self.left, self.right = val, left, right
@@ -264,7 +264,7 @@ def isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
 Symmetric Tree;Given the root of a binary tree, check whether it is symmetric around its center.;"Input:
   root = [1,2,2,3,4,4,3]
 Output:
-  true";Mirror recursion;Check left subtree vs right subtree mirrored.;"rec(l,r): both null→true; one null→false; values equal and rec(l.left,r.right) and rec(l.right,r.left).";O(n);O(h);https://leetcode.com/problems/symmetric-tree/;Trees, DFS/BFS, Easy;"from typing import Optional
+  true";Mirror recursion;Check left subtree vs right subtree mirrored.;"rec(l,r): both null→true; one null→false; values equal and rec(l.left,r.right) and rec(l.right,r.left).";O(n);O(h);https://leetcode.com/problems/symmetric-tree/;trees dfs/bfs easy;"from typing import Optional
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val, self.left, self.right = val, left, right
@@ -277,7 +277,7 @@ def isSymmetric(root: Optional[TreeNode]) -> bool:
 Subtree of Another Tree;Given two non-empty binary trees s and t, check whether tree t has exactly the same structure and node values as a subtree of s.;"Input:
   s = [3,4,5,1,2], t = [4,1,2]
 Output:
-  true";DFS compare at matches;At each node with same value as t's root, compare trees for equality.;"Recurse through s; when s.val == t.val call isSameTree; return true if any match succeeds.";O(m*n) worst;O(h);https://leetcode.com/problems/subtree-of-another-tree/;Trees, DFS, Easy;"class TreeNode:
+  true";DFS compare at matches;At each node with same value as t's root, compare trees for equality.;"Recurse through s; when s.val == t.val call isSameTree; return true if any match succeeds.";O(m*n) worst;O(h);https://leetcode.com/problems/subtree-of-another-tree/;trees dfs easy;"class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val, self.left, self.right = val, left, right
 def isSame(a, b):
@@ -290,7 +290,7 @@ def isSubtree(s: 'TreeNode', t: 'TreeNode') -> bool:
 Lowest Common Ancestor of a Binary Tree;Given a binary tree, find the lowest common ancestor (LCA) of two given nodes.;"Input:
   root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1
 Output:
-  3";DFS returns presence;Return node if it's p/q or contains them in different subtrees.;"Recurse left/right; if both non-null, current is LCA; else propagate non-null child up.";O(n);O(h);https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/;Trees, DFS, Medium;"class TreeNode:
+  3";DFS returns presence;Return node if it's p/q or contains them in different subtrees.;"Recurse left/right; if both non-null, current is LCA; else propagate non-null child up.";O(n);O(h);https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/;trees dfs medium;"class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val, self.left, self.right = val, left, right
 def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':

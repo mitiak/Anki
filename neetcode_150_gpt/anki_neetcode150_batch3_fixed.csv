@@ -2,7 +2,7 @@ Problem Name;Description;Example;Algorithm;Short Solution;Solution;Time Complexi
 Combination Sum II;Given a collection of candidate numbers (candidates) and a target number, find all unique combinations where the chosen numbers sum to target. Each number may be used at most once.;"Input:
   candidates = [10,1,2,7,6,1,5], target = 8
 Output:
-  [[1,1,6],[1,2,5],[1,7],[2,6]]";Backtracking + Sorting + Skip Duplicates;"Sort, backtrack with index progression; skip equal elements at same depth.";"Sort candidates; at each depth, iterate i from start, skip duplicates (if i>start and same as prev), choose candidates[i] once and recurse with i+1 and reduced target.";O(2^n) worst;O(n) recursion + output;https://leetcode.com/problems/combination-sum-ii/;Backtracking, DFS, Medium;"from typing import List
+  [[1,1,6],[1,2,5],[1,7],[2,6]]";Backtracking + Sorting + Skip Duplicates;"Sort, backtrack with index progression; skip equal elements at same depth.";"Sort candidates; at each depth, iterate i from start, skip duplicates (if i>start and same as prev), choose candidates[i] once and recurse with i+1 and reduced target.";O(2^n) worst;O(n) recursion + output;https://leetcode.com/problems/combination-sum-ii/;backtracking dfs medium;"from typing import List
 def combinationSum2(candidates: List[int], target: int) -> List[List[int]]:
     candidates.sort()
     res, path = [], []
@@ -26,7 +26,7 @@ def combinationSum2(candidates: List[int], target: int) -> List[List[int]]:
 Permutations;Given an array nums of distinct integers, return all its permutations.;"Input:
   nums = [1,2,3]
 Output:
-  [[1,2,3],[1,3,2],[2,1,3],...]";Backtracking / Swap In-Place;"Swap current index with each i≥index; recurse; swap back.";Classic DFS that fixes one position at a time by swapping each candidate into place and recursing to fill the rest.;O(n * n!);O(n) recursion + output;https://leetcode.com/problems/permutations/;Backtracking, DFS, Medium;"from typing import List
+  [[1,2,3],[1,3,2],[2,1,3],...]";Backtracking / Swap In-Place;"Swap current index with each i≥index; recurse; swap back.";Classic DFS that fixes one position at a time by swapping each candidate into place and recursing to fill the rest.;O(n * n!);O(n) recursion + output;https://leetcode.com/problems/permutations/;backtracking dfs medium;"from typing import List
 def permute(nums: List[int]) -> List[List[int]]:
     res = []
     def dfs(i):
@@ -41,7 +41,7 @@ def permute(nums: List[int]) -> List[List[int]]:
 Permutations II;Given a collection of numbers that might contain duplicates, return all unique permutations.;"Input:
   nums = [1,1,2]
 Output:
-  [[1,1,2],[1,2,1],[2,1,1]]";Backtracking + Counting/Skip Duplicates;Use counter map to choose each value up to its remaining count.;"Maintain counts of values; iterate keys, choose a key if count>0, decrement, recurse, then increment back. Avoids duplicate permutations.";O(n * n!) worst;O(n) recursion + output;https://leetcode.com/problems/permutations-ii/;Backtracking, DFS, Medium;"from collections import Counter
+  [[1,1,2],[1,2,1],[2,1,1]]";Backtracking + Counting/Skip Duplicates;Use counter map to choose each value up to its remaining count.;"Maintain counts of values; iterate keys, choose a key if count>0, decrement, recurse, then increment back. Avoids duplicate permutations.";O(n * n!) worst;O(n) recursion + output;https://leetcode.com/problems/permutations-ii/;backtracking dfs medium;"from collections import Counter
 from typing import List
 def permuteUnique(nums: List[int]) -> List[List[int]]:
     cnt = Counter(nums)
@@ -63,7 +63,7 @@ def permuteUnique(nums: List[int]) -> List[List[int]]:
 Subsets II;Given an integer array nums that may contain duplicates, return all possible subsets (the power set). The solution set must not contain duplicate subsets.;"Input:
   nums = [1,2,2]
 Output:
-  [[],[1],[2],[1,2],[2,2],[1,2,2]]";Backtracking + Sorting + Skip Duplicates;Sort, backtrack adding each element with skip of duplicates at same depth.;"On each depth, iterate i from start; if nums[i]==nums[i-1] and i>start, skip; otherwise include nums[i] and recurse, also always record current path.";O(n * 2^n);O(n) recursion + output;https://leetcode.com/problems/subsets-ii/;Backtracking, DFS, Medium;"from typing import List
+  [[],[1],[2],[1,2],[2,2],[1,2,2]]";Backtracking + Sorting + Skip Duplicates;Sort, backtrack adding each element with skip of duplicates at same depth.;"On each depth, iterate i from start; if nums[i]==nums[i-1] and i>start, skip; otherwise include nums[i] and recurse, also always record current path.";O(n * 2^n);O(n) recursion + output;https://leetcode.com/problems/subsets-ii/;backtracking dfs medium;"from typing import List
 def subsetsWithDup(nums: List[int]) -> List[List[int]]:
     nums.sort()
     res, path = [], []
@@ -81,7 +81,7 @@ def subsetsWithDup(nums: List[int]) -> List[List[int]]:
 Letter Combinations of a Phone Number;Given a string containing digits from 2-9 inclusive, return all possible letter combinations it could represent.;"Input:
   digits = ""23""
 Output:
-  [""ad"",""ae"",""af"",""bd"",""be"",""bf"",""cd"",""ce"",""cf""]";Backtracking;DFS build path by mapping each digit to its letters.;"If digits empty return []; recursively append each mapped char for current digit and move to next index.";O(4^n * n);O(n) recursion + output;https://leetcode.com/problems/letter-combinations-of-a-phone-number/;Backtracking, DFS, Medium;"from typing import List
+  [""ad"",""ae"",""af"",""bd"",""be"",""bf"",""cd"",""ce"",""cf""]";Backtracking;DFS build path by mapping each digit to its letters.;"If digits empty return []; recursively append each mapped char for current digit and move to next index.";O(4^n * n);O(n) recursion + output;https://leetcode.com/problems/letter-combinations-of-a-phone-number/;backtracking dfs medium;"from typing import List
 def letterCombinations(digits: str) -> List[str]:
     if not digits: return []
     mapd = {'2':'abc','3':'def','4':'ghi','5':'jkl','6':'mno','7':'pqrs','8':'tuv','9':'wxyz'}
@@ -96,7 +96,7 @@ def letterCombinations(digits: str) -> List[str]:
 Combinations;Given two integers n and k, return all possible combinations of k numbers chosen from the range [1, n].;"Input:
   n = 4, k = 2
 Output:
-  [[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]";Backtracking;DFS choose next number with pruning using remaining slots.;"Start from 1, choose or skip each number; prune when not enough numbers remain to fill k.";O(C(n,k) * k);O(k) recursion + output;https://leetcode.com/problems/combinations/;Backtracking, DFS, Medium;"from typing import List
+  [[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]";Backtracking;DFS choose next number with pruning using remaining slots.;"Start from 1, choose or skip each number; prune when not enough numbers remain to fill k.";O(C(n,k) * k);O(k) recursion + output;https://leetcode.com/problems/combinations/;backtracking dfs medium;"from typing import List
 def combine(n: int, k: int) -> List[List[int]]:
     res, path = [], []
     def dfs(start):
@@ -110,7 +110,7 @@ def combine(n: int, k: int) -> List[List[int]]:
 Pacific Atlantic Water Flow;Given an m x n matrix of heights, find cells where water can flow to both the Pacific and Atlantic oceans. Water can flow from cell to neighboring cells with equal or lower height.;"Input:
   heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]
 Output:
-  [[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]] (order may vary)";Graph DFS/BFS from Oceans;Reverse flow: start from borders of each ocean and expand to higher/equal cells.;"Run two DFS/BFS visits: one from Pacific edges, one from Atlantic; intersect visited sets to get cells reaching both.";O(m*n);O(m*n);https://leetcode.com/problems/pacific-atlantic-water-flow/;Graphs, DFS/BFS, Medium;"from collections import deque
+  [[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]] (order may vary)";Graph DFS/BFS from Oceans;Reverse flow: start from borders of each ocean and expand to higher/equal cells.;"Run two DFS/BFS visits: one from Pacific edges, one from Atlantic; intersect visited sets to get cells reaching both.";O(m*n);O(m*n);https://leetcode.com/problems/pacific-atlantic-water-flow/;graphs dfs/bfs medium;"from collections import deque
 from typing import List, Tuple
 def pacificAtlantic(heights: List[List[int]]) -> List[List[int]]:
     if not heights: return []
@@ -137,7 +137,7 @@ Number of Islands;Given a 2D grid map of '1's (land) and '0's (water), return th
   [""0"",""0"",""1"",""0"",""0""],
   [""0"",""0"",""0"",""1"",""1""]]
 Output:
-  3";DFS/BFS Flood Fill;"Scan cells; when unvisited land found, BFS/DFS to sink it and increment count.";Mark visited or mutate grid to '0' while exploring neighbors recursively/iteratively.;O(m*n);O(m*n);https://leetcode.com/problems/number-of-islands/;Graphs, DFS/BFS, Medium;"from typing import List
+  3";DFS/BFS Flood Fill;"Scan cells; when unvisited land found, BFS/DFS to sink it and increment count.";Mark visited or mutate grid to '0' while exploring neighbors recursively/iteratively.;O(m*n);O(m*n);https://leetcode.com/problems/number-of-islands/;graphs dfs/bfs medium;"from typing import List
 def numIslands(grid: List[List[str]]) -> int:
     if not grid: return 0
     m, n = len(grid), len(grid[0])
@@ -156,7 +156,7 @@ def numIslands(grid: List[List[str]]) -> int:
 Rotting Oranges;"In a grid, each cell is empty, fresh orange, or rotten orange. Each minute, fresh oranges adjacent to rotten ones become rotten. Return minutes until no fresh remain; -1 if impossible.";"Input:
   grid = [[2,1,1],[1,1,0],[0,1,1]]
 Output:
-  4";Multi-source BFS;Push all initial rotten into queue, BFS level by level decrementing fresh count.;"Count fresh, enqueue all rotten with time=0; process BFS to infect neighbors, tracking minutes; return minutes if fresh==0 else -1.";O(m*n);O(m*n);https://leetcode.com/problems/rotting-oranges/;BFS, Grid, Medium;"from collections import deque
+  4";Multi-source BFS;Push all initial rotten into queue, BFS level by level decrementing fresh count.;"Count fresh, enqueue all rotten with time=0; process BFS to infect neighbors, tracking minutes; return minutes if fresh==0 else -1.";O(m*n);O(m*n);https://leetcode.com/problems/rotting-oranges/;bfs grid medium;"from collections import deque
 from typing import List
 def orangesRotting(grid: List[List[int]]) -> int:
     m, n = len(grid), len(grid[0])
@@ -177,7 +177,7 @@ def orangesRotting(grid: List[List[int]]) -> int:
 Course Schedule;There are numCourses labeled from 0 to numCourses-1 with prerequisites. Determine if it's possible to finish all courses.;"Input:
   numCourses = 2, prerequisites = [[1,0]]
 Output:
-  true";Graph Topological Sort (Cycle Detection);Kahn's BFS (in-degree) or DFS cycle detection.;"Build adjacency and in-degree; repeatedly pop in-degree 0 nodes; if processed count equals numCourses, it's possible.";O(V+E);O(V+E);https://leetcode.com/problems/course-schedule/;Graphs, Topological Sort, Medium;"from collections import deque, defaultdict
+  true";Graph Topological Sort (Cycle Detection);Kahn's BFS (in-degree) or DFS cycle detection.;"Build adjacency and in-degree; repeatedly pop in-degree 0 nodes; if processed count equals numCourses, it's possible.";O(V+E);O(V+E);https://leetcode.com/problems/course-schedule/;graphs topological_sort medium;"from collections import deque, defaultdict
 from typing import List
 def canFinish(numCourses: int, prerequisites: List[List[int]]) -> bool:
     adj = defaultdict(list)
@@ -195,7 +195,7 @@ def canFinish(numCourses: int, prerequisites: List[List[int]]) -> bool:
 Course Schedule II;Return a possible order of courses you can take to finish all courses, or empty if impossible.;"Input:
   numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]
 Output:
-  [0,2,1,3] (one possible)";Topological Sort (Kahn);Same as Course Schedule but output ordering as nodes are popped.;"Maintain a result list while processing in-degree 0 nodes; if processed count != numCourses, return [].";O(V+E);O(V+E);https://leetcode.com/problems/course-schedule-ii/;Graphs, Topological Sort, Medium;"from collections import deque, defaultdict
+  [0,2,1,3] (one possible)";Topological Sort (Kahn);Same as Course Schedule but output ordering as nodes are popped.;"Maintain a result list while processing in-degree 0 nodes; if processed count != numCourses, return [].";O(V+E);O(V+E);https://leetcode.com/problems/course-schedule-ii/;graphs topological_sort medium;"from collections import deque, defaultdict
 from typing import List
 def findOrder(numCourses: int, prerequisites: List[List[int]]) -> List[int]:
     adj = defaultdict(list)
@@ -214,7 +214,7 @@ def findOrder(numCourses: int, prerequisites: List[List[int]]) -> List[int]:
 Clone Graph;Given a reference of a node in a connected undirected graph, return a deep copy (clone) of the graph.;"Input:
   adj list for node 1: [[2,4],[1,3],[2,4],[1,3]]
 Output:
-  cloned graph reference";DFS/BFS with Hash Map;"Map original node to its clone; traverse and clone neighbors on demand.";"Use a dict old→new; DFS or BFS to create clones and connect neighbors, avoiding revisiting via the map.";O(V+E);O(V);https://leetcode.com/problems/clone-graph/;Graphs, DFS/BFS, Medium;"from collections import deque
+  cloned graph reference";DFS/BFS with Hash Map;"Map original node to its clone; traverse and clone neighbors on demand.";"Use a dict old→new; DFS or BFS to create clones and connect neighbors, avoiding revisiting via the map.";O(V+E);O(V);https://leetcode.com/problems/clone-graph/;graphs dfs/bfs medium;"from collections import deque
 class Node:
     def __init__(self, val = 0, neighbors = None):
         self.val = val
@@ -234,7 +234,7 @@ def cloneGraph(node: 'Node') -> 'Node':
 Max Area of Island;Given a grid of 0s and 1s, return the maximum area of an island in the grid.;"Input:
   grid = [[0,0,1,0,0],[1,1,1,0,1],[0,1,0,0,1],[1,1,0,0,0]]
 Output:
-  5 (example)";DFS/BFS Flood Fill;For each unvisited land, DFS to count area and update max.;Recursively/iteratively explore neighbors, marking visited, and compute component size.;O(m*n);O(m*n);https://leetcode.com/problems/max-area-of-island/;Graphs, DFS/BFS, Medium;"from typing import List
+  5 (example)";DFS/BFS Flood Fill;For each unvisited land, DFS to count area and update max.;Recursively/iteratively explore neighbors, marking visited, and compute component size.;O(m*n);O(m*n);https://leetcode.com/problems/max-area-of-island/;graphs dfs/bfs medium;"from typing import List
 def maxAreaOfIsland(grid: List[List[int]]) -> int:
     m, n = len(grid), len(grid[0])
     def dfs(i, j):
@@ -251,7 +251,7 @@ def maxAreaOfIsland(grid: List[List[int]]) -> int:
 Surrounded Regions;Given an m x n board containing 'X' and 'O', capture all regions surrounded by 'X' by flipping surrounded 'O' to 'X'. Border-connected 'O' remain.;"Input:
   board = [[""X"",""X"",""X"",""X""],[""X"",""O"",""O"",""X""],[""X"",""X"",""O"",""X""],[""X"",""O"",""X"",""X""]]
 Output:
-  [[""X"",""X"",""X"",""X""],[""X"",""X"",""X"",""X""],[""X"",""X"",""X"",""X""],[""X"",""O"",""X"",""X""]]";BFS/DFS from Borders;Mark 'O' reachable from borders as safe, then flip the rest.;"Flood fill from border 'O's marking as temp; then flip remaining 'O' to 'X' and temp back to 'O'.";O(m*n);O(m*n);https://leetcode.com/problems/surrounded-regions/;Graphs, DFS/BFS, Medium;"from typing import List
+  [[""X"",""X"",""X"",""X""],[""X"",""X"",""X"",""X""],[""X"",""X"",""X"",""X""],[""X"",""O"",""X"",""X""]]";BFS/DFS from Borders;Mark 'O' reachable from borders as safe, then flip the rest.;"Flood fill from border 'O's marking as temp; then flip remaining 'O' to 'X' and temp back to 'O'.";O(m*n);O(m*n);https://leetcode.com/problems/surrounded-regions/;graphs dfs/bfs medium;"from typing import List
 def solve(board: List[List[str]]) -> None:
     if not board: return
     m, n = len(board), len(board[0])
@@ -270,7 +270,7 @@ def solve(board: List[List[str]]) -> None:
 Walls and Gates;You are given an m x n grid rooms initialized with INF (empty), -1 (wall), and 0 (gate). Fill the empty rooms with the distance to its nearest gate.;"Input:
   rooms = [[2147483647,-1,0,2147483647],[2147483647,2147483647,2147483647,-1],[2147483647,-1,2147483647,-1],[0,-1,2147483647,2147483647]]
 Output:
-  distances filled to nearest 0";Multi-source BFS;Push all gates (0) and BFS to fill shortest distances.;"Initialize queue with all gates; BFS layer-wise updating neighbors with dist+1 if smaller.";O(m*n);O(m*n);https://leetcode.com/problems/walls-and-gates/;BFS, Grid, Medium;"from collections import deque
+  distances filled to nearest 0";Multi-source BFS;Push all gates (0) and BFS to fill shortest distances.;"Initialize queue with all gates; BFS layer-wise updating neighbors with dist+1 if smaller.";O(m*n);O(m*n);https://leetcode.com/problems/walls-and-gates/;bfs grid medium;"from collections import deque
 from typing import List
 def wallsAndGates(rooms: List[List[int]]) -> None:
     INF = 2147483647
@@ -290,7 +290,7 @@ def wallsAndGates(rooms: List[List[int]]) -> None:
 Binary Tree Right Side View;Given the root of a binary tree, return the values of the nodes you can see ordered from top to bottom when looking from the right side.;"Input:
   root = [1,2,3,null,5,null,4]
 Output:
-  [1,3,4]";BFS by Level (take last);Level order traversal and record the last node per level.;"Use queue; for each level of size k, iterate and push children; record last popped value.";O(n);O(n);https://leetcode.com/problems/binary-tree-right-side-view/;Trees, BFS, Medium;"from collections import deque
+  [1,3,4]";BFS by Level (take last);Level order traversal and record the last node per level.;"Use queue; for each level of size k, iterate and push children; record last popped value.";O(n);O(n);https://leetcode.com/problems/binary-tree-right-side-view/;trees bfs medium;"from collections import deque
 from typing import Optional, List
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
@@ -310,7 +310,7 @@ def rightSideView(root: Optional[TreeNode]) -> List[int]:
 Lowest Common Ancestor of a BST;Given a binary search tree (BST), find the lowest common ancestor (LCA) of two given nodes in the BST.;"Input:
   root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8
 Output:
-  6";BST Property Traversal;"Walk from root: if both < root go left; if both > root go right; else root is LCA.";The split point (where p and q diverge) is the LCA by BST ordering property.;O(h);O(1);https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/;Trees, BST, Easy;"class TreeNode:
+  6";BST Property Traversal;"Walk from root: if both < root go left; if both > root go right; else root is LCA.";The split point (where p and q diverge) is the LCA by BST ordering property.;O(h);O(1);https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/;trees bst easy;"class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val, self.left, self.right = val, left, right
 def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
@@ -325,7 +325,7 @@ def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'Tre
 Binary Tree Maximum Path Sum;"Given the root of a binary tree, return the maximum path sum of any non-empty path (may or may not pass through root; nodes cannot be reused).";"Input:
   root = [-10,9,20,null,null,15,7]
 Output:
-  42";DFS with Return Gain;"Return max gain from node to parent; update global best with left_gain + node + right_gain.";"Compute gains as max(child_gain, 0); update a global max with node.val + left_gain + right_gain.";O(n);O(h);https://leetcode.com/problems/binary-tree-maximum-path-sum/;Trees, DFS, Hard;"from typing import Optional
+  42";DFS with Return Gain;"Return max gain from node to parent; update global best with left_gain + node + right_gain.";"Compute gains as max(child_gain, 0); update a global max with node.val + left_gain + right_gain.";O(n);O(h);https://leetcode.com/problems/binary-tree-maximum-path-sum/;trees dfs hard;"from typing import Optional
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val, self.left, self.right = val, left, right
@@ -343,7 +343,7 @@ def maxPathSum(root: Optional[TreeNode]) -> int:
 Construct Binary Tree from Preorder and Inorder Traversal;Given preorder and inorder traversal of a binary tree, construct the binary tree.;"Input:
   preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
 Output:
-  tree root";Recursion + Hash Map (value→index);"Use preorder pointer; split inorder at root index to build left/right recursively.";"Maintain an index map for inorder; recursively build subtrees by slicing index ranges while advancing preorder pointer.";O(n);O(n);https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/;Trees, Recursion, Medium;"from typing import List, Optional
+  tree root";Recursion + Hash Map (value→index);"Use preorder pointer; split inorder at root index to build left/right recursively.";"Maintain an index map for inorder; recursively build subtrees by slicing index ranges while advancing preorder pointer.";O(n);O(n);https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/;trees recursion medium;"from typing import List, Optional
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val, self.left, self.right = val, left, right
@@ -362,7 +362,7 @@ def buildTree(preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
 Serialize and Deserialize Binary Tree;Design an algorithm to serialize and deserialize a binary tree. Ensure that your codec can handle null nodes and reproduce the same tree.;"Input:
   root = [1,2,3,null,null,4,5]
 Output:
-  after deserialization -> same tree";BFS or DFS with Null Markers;Use pre-order with '#' for nulls, or level-order with nulls separated by commas.;"Preorder DFS append values and '#' for null; for deserialize, read tokens and rebuild recursively.";O(n);O(n);https://leetcode.com/problems/serialize-and-deserialize-binary-tree/;Trees, Design, Hard;"from typing import Optional, List
+  after deserialization -> same tree";BFS or DFS with Null Markers;Use pre-order with '#' for nulls, or level-order with nulls separated by commas.;"Preorder DFS append values and '#' for null; for deserialize, read tokens and rebuild recursively.";O(n);O(n);https://leetcode.com/problems/serialize-and-deserialize-binary-tree/;trees design hard;"from typing import Optional, List
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val, self.left, self.right = val, left, right
