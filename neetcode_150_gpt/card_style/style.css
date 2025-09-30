@@ -24,9 +24,11 @@ a:hover {
 code, pre {
   font-family: Consolas, monospace;
   font-size: 14px;
-  background: #333333;         /* light gray for contrast */
-  padding: 6px;
-  border-radius: 4px;
+  background: #2d2d2d;   /* darker background for Prism themes */
+  padding: 8px;
+  border-radius: 6px;
   display: block;
-  white-space: pre-wrap;
+  white-space: pre;       /* preserves exact spaces and newlines */
+  overflow-x: auto;       /* horizontal scroll if needed */
+  tab-size: 4;
 }

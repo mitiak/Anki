@@ -49,3 +49,58 @@
   <pre><code>{{Comments}}</code></pre>
 </div>
 {{/Comments}}
+
+<!-- Prism theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+<!-- Prism core in MANUAL mode -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" data-manual></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script>
+(function () {
+  // Convert <br> / <div> line breaks created by editors into real \n,
+  // then set as textContent before Prism runs (works on desktop + Android).
+  function normalizeCodeBlocks() {
+    document.querySelectorAll('pre > code').forEach(function(code) {
+      // If already normalized once, skip
+      if (code.dataset.normalized) return;
+
+      // Work with the current HTML (may contain <br>, <div>, &nbsp;, entities)
+      var html = code.innerHTML;
+
+      // Turn <div>…</div> blocks into line breaks
+      html = html
+        .replace(/<\/div>\s*<div>/gi, '\n')
+        .replace(/<div>/gi, '')
+        .replace(/<\/div>/gi, '');
+
+      // Turn <br> variants into line breaks
+      html = html.replace(/<br\s*\/?>/gi, '\n');
+
+      // Replace &nbsp; with spaces
+      html = html.replace(/&nbsp;/g, ' ');
+
+      // Decode common entities that might sneak in
+      html = html.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+
+      // Now set as pure text so the <pre> respects real newlines/spaces
+      code.textContent = html;
+
+      code.dataset.normalized = '1';
+    });
+  }
+
+  function runHighlight() {
+    normalizeCodeBlocks();
+    if (window.Prism && Prism.highlightAll) Prism.highlightAll();
+  }
+
+  // Run after DOM is ready; Android sometimes needs an extra tick.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(runHighlight, 0); });
+  } else {
+    setTimeout(runHighlight, 0);
+  }
+})();
+</script>
