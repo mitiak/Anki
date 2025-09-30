@@ -1,0 +1,32 @@
+.card {
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;   /* White background */
+  color: #000000;              /* Black text */
+  text-align: left;
+  padding: 12px;
+  line-height: 1.5;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dfe6e9;
+}
+
+a {
+  color: #000000;  /* Links black as well */
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code, pre {
+  font-family: Consolas, monospace;
+  font-size: 14px;
+  background: #333333;         /* light gray for contrast */
+  padding: 6px;
+  border-radius: 4px;
+  display: block;
+  white-space: pre-wrap;
+}

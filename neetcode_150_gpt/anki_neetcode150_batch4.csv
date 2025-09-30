@@ -1,0 +1,321 @@
+Problem Name;Description;Example;Algorithm;Short Solution;Solution;Time Complexity;Space Complexity;Link;Tags;Code;Comments
+Evaluate Reverse Polish Notation;Evaluate the value of an arithmetic expression in Reverse Polish Notation (RPN). Valid operators are +, -, *, /. Division truncates toward zero.;"Input:
+  tokens = [""2"",""1"",""+"",""3"",""*""]
+Output:
+  9  # (2+1)*3";Stack;"Scan tokens; push numbers, pop two on operator, apply, push result.";"Use a stack; for each token, if it's a number push; otherwise pop b,a and compute a op b, taking care to truncate division toward zero.";O(n);O(n);https://leetcode.com/problems/evaluate-reverse-polish-notation/;Stack, Math, Medium;"from typing import List
+def evalRPN(tokens: List[str]) -> int:
+    st = []
+    for t in tokens:
+        if t not in {""+"",""-"",""*"",""/""}:
+            st.append(int(t)); continue
+        b, a = st.pop(), st.pop()
+        if t == ""+"": st.append(a + b)
+        elif t == ""-"": st.append(a - b)
+        elif t == ""*"": st.append(a * b)
+        else:
+            st.append(int(a / b))
+    return st[-1]";
+Min Stack;Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.;"Operations:
+  push(-2), push(0), push(-3), getMin() -> -3, pop(), top() -> 0, getMin() -> -2";Two Stacks;Maintain a main stack and a min stack tracking the current min.;"On push, also push min(min_stack_top, x) to min stack; on pop, pop both stacks; getMin is top of min stack.";O(1) per op;O(n);https://leetcode.com/problems/min-stack/;Design, Stack, Medium;"class MinStack:
+    def __init__(self):
+        self.st = []
+        self.mst = []
+    def push(self, val: int) -> None:
+        self.st.append(val)
+        self.mst.append(val if not self.mst else min(val, self.mst[-1]))
+    def pop(self) -> None:
+        self.st.pop(); self.mst.pop()
+    def top(self) -> int:
+        return self.st[-1]
+    def getMin(self) -> int:
+        return self.mst[-1]";
+Daily Temperatures;Given a list of daily temperatures T, return a list such that, for each day i, tells you how many days you would have to wait until a warmer temperature. If there is no future day for which this is possible, put 0.;"Input:
+  T = [73,74,75,71,69,72,76,73]
+Output:
+  [1,1,4,2,1,1,0,0]";Monotonic Stack;"Maintain decreasing stack of indices; pop when a warmer day arrives and fill gap.";"Iterate i; while stack not empty and T[i] > T[st[-1]], set ans[st[-1]] = i - st[-1] and pop; push i.";O(n);O(n);https://leetcode.com/problems/daily-temperatures/;Stack, Array, Medium;"from typing import List
+def dailyTemperatures(T: List[int]) -> List[int]:
+    n = len(T); ans = [0]*n; st = []
+    for i, t in enumerate(T):
+        while st and T[st[-1]] < t:
+            j = st.pop()
+            ans[j] = i - j
+        st.append(i)
+    return ans";
+Car Fleet;There are n cars going to the same destination. Each car starts at position and speed. A car catches up to the one in front and forms a fleet if it reaches it at the same time. Return the number of car fleets that will arrive at the destination.;"Input:
+  target = 12, position = [10,8,0,5,3], speed = [2,4,1,1,3]
+Output:
+  3";Sort by Position + Stack;"Sort by starting position descending; compute time to target; count fleets by monotonic times.";"Pair (pos,speed), sort by pos descending; for each time t=(target-pos)/speed, if t > last_time, it's a new fleet; else it merges.";O(n log n);O(n);https://leetcode.com/problems/car-fleet/;Greedy, Sorting, Medium;"from typing import List
+def carFleet(target: int, position: List[int], speed: List[int]) -> int:
+    cars = sorted(zip(position, speed), reverse=True)
+    fleets = 0
+    last = 0.0
+    for pos, sp in cars:
+        t = (target - pos) / sp
+        if t > last:
+            fleets += 1
+            last = t
+    return fleets";
+Largest Rectangle in Histogram;Given an array of bar heights representing a histogram, find the area of the largest rectangle in the histogram.;"Input:
+  heights = [2,1,5,6,2,3]
+Output:
+  10";Monotonic Stack;"Stack of increasing bars; pop to compute area when a lower bar arrives.";"Append sentinel 0; for each index, while current < top height, pop h, compute width between current index and new top; track max.";O(n);O(n);https://leetcode.com/problems/largest-rectangle-in-histogram/;Stack, Array, Hard;"from typing import List
+def largestRectangleArea(heights: List[int]) -> int:
+    st = []
+    best = 0
+    for i, h in enumerate(heights + [0]):
+        start = i
+        while st and st[-1][1] > h:
+            idx, hh = st.pop()
+            best = max(best, hh * (i - idx))
+            start = idx
+        st.append((start, h))
+    return best";
+Sliding Window Maximum;Given an array nums and a sliding window of size k, return the maximum for each window as it slides from left to right.;"Input:
+  nums = [1,3,-1,-3,5,3,6,7], k = 3
+Output:
+  [3,3,5,5,6,7]";Deque (Monotonic Queue);"Maintain deque of indices with decreasing values; front is max.";"Remove indices out of window from front; pop from back while nums[i] ≥ nums[back]; push i; record nums[deque[0]] once window formed.";O(n);O(k);https://leetcode.com/problems/sliding-window-maximum/;Deque, Monotonic Queue, Hard;"from collections import deque
+from typing import List
+def maxSlidingWindow(nums: List[int], k: int) -> List[int]:
+    dq = deque()
+    res = []
+    for i, x in enumerate(nums):
+        while dq and dq[0] <= i - k:
+            dq.popleft()
+        while dq and nums[dq[-1]] <= x:
+            dq.pop()
+        dq.append(i)
+        if i >= k - 1:
+            res.append(nums[dq[0]])
+    return res";
+Kth Largest Element in an Array;Find the kth largest element in an unsorted array.;"Input:
+  nums = [3,2,1,5,6,4], k = 2
+Output:
+  5";Quickselect or Heap;Use quickselect partitioning for average O(n).;"Select nth_element with target index n-k under 0-indexing by randomized partition; alternatively use a min-heap of size k.";O(n) average (quickselect);O(1) (quickselect) / O(k) (heap);https://leetcode.com/problems/kth-largest-element-in-an-array/;Quickselect, Heap, Medium;"import random
+from typing import List
+def findKthLargest(nums: List[int], k: int) -> int:
+    k = len(nums) - k
+    def part(l, r, p):
+        pv = nums[p]
+        nums[p], nums[r] = nums[r], nums[p]
+        i = l
+        for j in range(l, r):
+            if nums[j] < pv:
+                nums[i], nums[j] = nums[j], nums[i]
+                i += 1
+        nums[i], nums[r] = nums[r], nums[i]
+        return i
+    l, r = 0, len(nums)-1
+    while True:
+        p = random.randint(l, r)
+        m = part(l, r, p)
+        if m == k: return nums[m]
+        if m < k: l = m + 1
+        else: r = m - 1";
+K Closest Points to Origin;Given an array of points on the X-Y plane, return the k closest points to the origin (0,0).;"Input:
+  points = [[3,3],[5,-1],[-2,4]], k = 2
+Output:
+  [[3,3],[-2,4]] (order may vary)";Heap / Quickselect;Use max-heap of size k by negative distance or quickselect.;"Push points with -distance into a heap and pop when size > k; return heap contents.";O(n log k) (heap) / O(n) average (quickselect);O(k);https://leetcode.com/problems/k-closest-points-to-origin/;Heap, Geometry, Medium;"import heapq
+from typing import List
+def kClosest(points: List[List[int]], k: int) -> List[List[int]]:
+    h = []
+    for x, y in points:
+        d = x*x + y*y
+        heapq.heappush(h, (-d, x, y))
+        if len(h) > k:
+            heapq.heappop(h)
+    return [[x, y] for _, x, y in h]";
+Task Scheduler;Given a list of tasks represented by capital letters and a non-negative cooling interval n, find the least number of units of time needed to finish all tasks.;"Input:
+  tasks = [""A"",""A"",""A"",""B"",""B"",""B""], n = 2
+Output:
+  8  # A _ _ A _ _ A B B B arranged optimally";Greedy + Counting;Use frame formula based on most frequent tasks: max(len(tasks), (max_count-1)*(n+1)+num_max).;"Count frequencies; compute idle slots around the most frequent characters using the scheduling formula.";O(n);O(1) (26 letters);https://leetcode.com/problems/task-scheduler/;Greedy, Math, Medium;"from collections import Counter
+from typing import List
+def leastInterval(tasks: List[str], n: int) -> int:
+    cnt = Counter(tasks)
+    maxc = max(cnt.values())
+    num_max = sum(1 for c in cnt.values() if c == maxc)
+    return max(len(tasks), (maxc - 1) * (n + 1) + num_max)";
+Reorganize String;Given a string s, rearrange the characters so that no two adjacent characters are the same. Return any valid rearrangement or empty if impossible.;"Input:
+  s = ""aab""
+Output:
+  ""aba""";Greedy + Max Heap;"Pop two most frequent different chars and append; push back with decremented counts.";If max frequency exceeds ceil(n/2), impossible. Otherwise use a heap to always pick the top two distinct characters.;O(n log k);O(k);https://leetcode.com/problems/reorganize-string/;Heap, Greedy, Medium;"import heapq
+from collections import Counter
+def reorganizeString(s: str) -> str:
+    cnt = Counter(s)
+    h = [(-c, ch) for ch, c in cnt.items()]
+    heapq.heapify(h)
+    res = []
+    prev = (0, '')
+    while h:
+        c1, ch1 = heapq.heappop(h)
+        if prev[0] < 0:
+            heapq.heappush(h, prev)
+        res.append(ch1)
+        c1 += 1
+        prev = (c1, ch1)
+        if not h and prev[0] < 0:
+            return """"
+    return ''.join(res)";
+Longest Consecutive Sequence;Given an unsorted array of integers, find the length of the longest consecutive elements sequence.;"Input:
+  nums = [100,4,200,1,3,2]
+Output:
+  4  # sequence [1,2,3,4]";Hash Set;"Start sequences at numbers without a predecessor; grow forward.";"Insert all into a set; for each x whose x-1 not in set, grow y=x while y+1 in set, tracking best length.";O(n);O(n);https://leetcode.com/problems/longest-consecutive-sequence/;Hash Set, Array, Medium;"from typing import List
+def longestConsecutive(nums: List[int]) -> int:
+    s = set(nums)
+    best = 0
+    for x in s:
+        if x - 1 not in s:
+            y = x
+            while y in s:
+                y += 1
+            best = max(best, y - x)
+    return best";
+Subarray Sum Equals K;Given an array of integers and an integer k, return the total number of continuous subarrays whose sum equals to k.;"Input:
+  nums = [1,1,1], k = 2
+Output:
+  2";Prefix Sum + Hash Map;"Count prefix sums; for each sum s, add count of (s-k) seen.";"Maintain a dict freq of prefix sums; initialize freq[0]=1; accumulate sum and increment answer by freq[sum-k].";O(n);O(n);https://leetcode.com/problems/subarray-sum-equals-k/;Prefix Sum, Hash Map, Medium;"from typing import List
+from collections import defaultdict
+def subarraySum(nums: List[int], k: int) -> int:
+    freq = defaultdict(int); freq[0] = 1
+    s = ans = 0
+    for x in nums:
+        s += x
+        ans += freq[s - k]
+        freq[s] += 1
+    return ans";
+Kth Smallest Element in a BST;Given the root of a binary search tree and an integer k, return the kth smallest value (1-indexed) of all the values of the nodes in the tree.;"Input:
+  root = [3,1,4,null,2], k = 1
+Output:
+  1";Inorder Traversal;"Inorder traversal yields sorted order; stop at k.";"Iterative inorder using a stack; decrement k when visiting; return value when k hits zero.";O(h + k);O(h);https://leetcode.com/problems/kth-smallest-element-in-a-bst/;BST, Inorder, Medium;"from typing import Optional
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val, self.left, self.right = val, left, right
+def kthSmallest(root: Optional[TreeNode], k: int) -> int:
+    st = []
+    cur = root
+    while True:
+        while cur:
+            st.append(cur)
+            cur = cur.left
+        cur = st.pop()
+        k -= 1
+        if k == 0:
+            return cur.val
+        cur = cur.right";
+Validate Binary Search Tree;Given the root of a binary tree, determine if it is a valid binary search tree (BST).;"Input:
+  root = [2,1,3]
+Output:
+  true";DFS with Bounds;Recurse with valid (low, high) bounds for each node value.;"Node must satisfy low < val < high; recurse left with high=val and right with low=val.";O(n);O(h);https://leetcode.com/problems/validate-binary-search-tree/;BST, DFS, Medium;"from typing import Optional
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val, self.left, self.right = val, left, right
+def isValidBST(root: Optional[TreeNode]) -> bool:
+    def dfs(node, low, high):
+        if not node: return True
+        if not (low < node.val < high): return False
+        return dfs(node.left, low, node.val) and dfs(node.right, node.val, high)
+    return dfs(root, float('-inf'), float('inf'))";
+Diameter of Binary Tree;Given the root of a binary tree, return the length of the diameter (the number of edges on the longest path between any two nodes).;"Input:
+  root = [1,2,3,4,5]
+Output:
+  3  # path 4-2-1-3 or 5-2-1-3";DFS with Height;At each node, diameter through node = left_height + right_height.;"Return height to parent as 1 + max(left,right); update global best with sum of heights.";O(n);O(h);https://leetcode.com/problems/diameter-of-binary-tree/;Trees, DFS, Easy;"from typing import Optional
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val, self.left, self.right = val, left, right
+def diameterOfBinaryTree(root: Optional[TreeNode]) -> int:
+    best = 0
+    def h(node):
+        nonlocal best
+        if not node: return 0
+        l = h(node.left); r = h(node.right)
+        best = max(best, l + r)
+        return 1 + max(l, r)
+    h(root)
+    return best";
+Balanced Binary Tree;Given a binary tree, determine if it is height-balanced (the height difference between left and right subtrees of every node is at most 1).;"Input:
+  root = [3,9,20,null,null,15,7]
+Output:
+  true";DFS Returning Height or -1;"Return -1 if unbalanced; else return height.";"Postorder recursion computing heights; propagate failure early with sentinel -1.";O(n);O(h);https://leetcode.com/problems/balanced-binary-tree/;Trees, DFS, Easy;"from typing import Optional
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val, self.left, self.right = val, left, right
+def isBalanced(root: Optional[TreeNode]) -> bool:
+    def dfs(node):
+        if not node: return 0
+        l = dfs(node.left)
+        if l == -1: return -1
+        r = dfs(node.right)
+        if r == -1: return -1
+        if abs(l - r) > 1: return -1
+        return 1 + max(l, r)
+    return dfs(root) != -1";
+Invert Binary Tree;Invert a binary tree by swapping the left and right children of every node.;"Input:
+  root = [4,2,7,1,3,6,9]
+Output:
+  [4,7,2,9,6,3,1]";DFS/BFS;Swap children recursively or iteratively.;"Preorder swap left/right and recurse; or BFS queue swapping each node's children.";O(n);O(h);https://leetcode.com/problems/invert-binary-tree/;Trees, Easy;"from typing import Optional
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val, self.left, self.right = val, left, right
+def invertTree(root: Optional[TreeNode]) -> Optional[TreeNode]:
+    if not root: return None
+    root.left, root.right = invertTree(root.right), invertTree(root.left)
+    return root";
+Implement Trie (Prefix Tree);Implement a Trie with insert, search, and startsWith methods for lowercase English letters.;"Operations:
+  insert(""apple""), search(""apple"") -> True, search(""app"") -> False, startsWith(""app"") -> True";Trie (Array/Dict Node);"Each node has 26 children and end flag; traverse per character.";"Insert traverses/creates nodes; search checks end flag; startsWith checks reachability.";O(L) per op;O(total characters);https://leetcode.com/problems/implement-trie-prefix-tree/;Trie, Design, Medium;"class TrieNode:
+    __slots__ = (""ch"", ""end"")
+    def __init__(self):
+        self.ch = {}
+        self.end = False
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+    def insert(self, word: str) -> None:
+        node = self.root
+        for c in word:
+            node = node.ch.setdefault(c, TrieNode())
+        node.end = True
+    def search(self, word: str) -> bool:
+        node = self.root
+        for c in word:
+            if c not in node.ch: 
+                return False
+            node = node.ch[c]
+        return node.end
+    def startsWith(self, prefix: str) -> bool:
+        node = self.root
+        for c in prefix:
+            if c not in node.ch: 
+                return False
+            node = node.ch[c]
+        return True";
+Add and Search Word (Word Dictionary);Design a data structure that supports adding new words and searching for a string, where '.' can match any letter.;"Operations:
+  addWord(""bad""), addWord(""dad""), addWord(""mad""), search(""pad"") -> False, search(""bad"") -> True, search("".ad"") -> True, search(""b.."") -> True";Trie + DFS for '.';DFS branching when encountering '.' wildcard.;"Store words in Trie; for search, when '.', try all children recursively; otherwise follow concrete edge.";O(L * 26^dots) worst;O(total characters);https://leetcode.com/problems/add-and-search-word-data-structure-design/;Trie, Backtracking, Medium;"class WordDictionary:
+    def __init__(self):
+        self.root = {}
+        self.end = '#'
+    def addWord(self, word: str) -> None:
+        node = self.root
+        for c in word:
+            node = node.setdefault(c, {})
+        node[self.end] = True
+    def search(self, word: str) -> bool:
+        def dfs(node, i):
+            if i == len(word):
+                return self.end in node
+            c = word[i]
+            if c == '.':
+                return any(dfs(node[ch], i+1) for ch in node if ch != self.end)
+            if c in node:
+                return dfs(node[c], i+1)
+            return False
+        return dfs(self.root, 0)";
+Time Based Key-Value Store;Design a time-based key-value data structure that can store multiple values for the same key at different timestamps and retrieve the value for a key at a certain timestamp.;"Operations:
+  set(""foo"",""bar"",1), get(""foo"",1) -> ""bar"", get(""foo"",3) -> ""bar"", set(""foo"",""bar2"",4), get(""foo"",4) -> ""bar2""";Hash Map + Binary Search;"Store (timestamp,value) list per key; binary search for last <= query time.";"Append values with timestamps per key; for get, bisect on timestamp to find rightmost <= t and return its value if exists.";O(log n) per get;O(n);https://leetcode.com/problems/time-based-key-value-store/;Design, Binary Search, Medium;"from bisect import bisect_right
+class TimeMap:
+    def __init__(self):
+        self.mp = {}
+    def set(self, key: str, value: str, timestamp: int) -> None:
+        self.mp.setdefault(key, []).append((timestamp, value))
+    def get(self, key: str, timestamp: int) -> str:
+        arr = self.mp.get(key, [])
+        i = bisect_right(arr, (timestamp, chr(127))) - 1
+        return arr[i][1] if i >= 0 else """"";

@@ -1,0 +1,321 @@
+Problem Name;Description;Example;Algorithm;Short Solution;Solution;Time Complexity;Space Complexity;Link;Tags;Code;Comments
+Design Linked List;Design a singly linked list with operations: get(index), addAtHead(val), addAtTail(val), addAtIndex(index,val), deleteAtIndex(index). Indices are 0-based.;"Operations:
+  addAtHead(1), addAtTail(3), addAtIndex(1,2) -> list: 1->2->3, get(1) -> 2, deleteAtIndex(1) -> list: 1->3";Linked List Implementation;Use sentinel head and maintain size to simplify edge cases.;"Maintain a dummy head; traverse to (index) for get/delete and to (index) for insert. Keep size updated and guard invalid indices.";O(n) per op worst;O(n) storage;https://leetcode.com/problems/design-linked-list/;Linked List, Design, Medium;"class MyLinkedList:
+    class Node:
+        def __init__(self, val=0, nxt=None):
+            self.val, self.next = val, nxt
+    def __init__(self):
+        self.head = self.Node()
+        self.sz = 0
+    def get(self, index: int) -> int:
+        if index < 0 or index >= self.sz: return -1
+        cur = self.head.next
+        for _ in range(index): cur = cur.next
+        return cur.val
+    def addAtHead(self, val: int) -> None:
+        self.addAtIndex(0, val)
+    def addAtTail(self, val: int) -> None:
+        self.addAtIndex(self.sz, val)
+    def addAtIndex(self, index: int, val: int) -> None:
+        if index < 0: index = 0
+        if index > self.sz: return
+        prev = self.head
+        for _ in range(index): prev = prev.next
+        prev.next = self.Node(val, prev.next)
+        self.sz += 1
+    def deleteAtIndex(self, index: int) -> None:
+        if index < 0 or index >= self.sz: return
+        prev = self.head
+        for _ in range(index): prev = prev.next
+        prev.next = prev.next.next
+        self.sz -= 1";
+Reverse Linked List;Given the head of a singly linked list, reverse the list and return the new head.;"Input:
+  head = [1,2,3,4,5]
+Output:
+  [5,4,3,2,1]";Iterative Pointer Reversal;Iterate and rewire next pointers using prev/curr.;"Walk through nodes with prev=None, curr=head; at each step store nxt, set curr.next=prev, advance. Return prev at end.";O(n);O(1);https://leetcode.com/problems/reverse-linked-list/;Linked List, Easy;"class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+def reverseList(head: 'ListNode') -> 'ListNode':
+    prev, cur = None, head
+    while cur:
+        nxt = cur.next
+        cur.next = prev
+        prev, cur = cur, nxt
+    return prev";
+Linked List Cycle;Given head of a linked list, determine if the list has a cycle.;"Input:
+  head = [3,2,0,-4], pos = 1
+Output:
+  true";Floyd's Tortoise and Hare;"Use slow/fast pointers; if they meet, cycle exists.";"Advance slow by 1 and fast by 2; if fast reaches null, no cycle; if they meet, return True.";O(n);O(1);https://leetcode.com/problems/linked-list-cycle/;Linked List, Two Pointers, Easy;"def hasCycle(head) -> bool:
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow is fast: return True
+    return False";
+Merge k Sorted Lists;Merge k sorted linked lists and return it as one sorted list.;"Input:
+  lists = [[1,4,5],[1,3,4],[2,6]]
+Output:
+  [1,1,2,3,4,4,5,6]";Heap (k-way merge);"Push head of each list to min-heap; pop/push next nodes.";"Use a heap of (value, unique_id, node) to avoid compare issues; build merged list by popping min and pushing its next.";O(N log k);O(k) heap;https://leetcode.com/problems/merge-k-sorted-lists/;Heap, Linked List, Hard;"import heapq
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+def mergeKLists(lists):
+    h = []
+    for i, node in enumerate(lists):
+        if node:
+            heapq.heappush(h, (node.val, i, node))
+    dummy = tail = ListNode(0)
+    while h:
+        val, i, node = heapq.heappop(h)
+        tail.next = node; tail = tail.next
+        if node.next:
+            heapq.heappush(h, (node.next.val, i, node.next))
+    return dummy.next";
+Remove Nth Node From End of List;Remove the nth node from the end of a singly linked list and return its head.;"Input:
+  head = [1,2,3,4,5], n = 2
+Output:
+  [1,2,3,5]";Two Pointers;"Advance fast n steps, then move both until fast.next is null; remove slow.next.";"Use a dummy to simplify removing head; connect slow.next = slow.next.next.";O(n);O(1);https://leetcode.com/problems/remove-nth-node-from-end-of-list/;Linked List, Two Pointers, Medium;"class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+def removeNthFromEnd(head: 'ListNode', n: int) -> 'ListNode':
+    dummy = ListNode(0, head)
+    slow = fast = dummy
+    for _ in range(n): fast = fast.next
+    while fast and fast.next:
+        slow = slow.next; fast = fast.next
+    slow.next = slow.next.next
+    return dummy.next";
+Reorder List;Reorder a linked list L0→L1→…→Ln into L0→Ln→L1→Ln-1→… in-place.;"Input:
+  head = [1,2,3,4]
+Output:
+  [1,4,2,3]";Find Middle + Reverse Second Half + Merge;Slow/fast to middle, reverse second half, merge alternately.;Split at mid, reverse second part, then weave nodes alternating from first and second lists.;O(n);O(1);https://leetcode.com/problems/reorder-list/;Linked List, Two Pointers, Medium;"class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+def reorderList(head: 'ListNode') -> None:
+    if not head or not head.next: return
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next; fast = fast.next.next
+    prev, cur = None, slow.next
+    slow.next = None
+    while cur:
+        nxt = cur.next; cur.next = prev; prev, cur = cur, nxt
+    l1, l2 = head, prev
+    while l2:
+        n1, n2 = l1.next, l2.next
+        l1.next = l2; l2.next = n1
+        l1, l2 = n1, n2";
+Copy List with Random Pointer;Given a linked list where each node has next and random pointers, return a deep copy of the list.;"Input:
+  head = [[7,null],[13,0],[11,4],[10,2],[1,0]]
+Output:
+  deep-copied head";Hash Map or Interweaving;"Interweave nodes to copy random in O(1) extra space; then split.";First pass: clone each node and insert after it. Second pass: set cloned.random = original.random.next. Third pass: detach cloned list.;O(n);O(1) extra (interweave);https://leetcode.com/problems/copy-list-with-random-pointer/;Linked List, Hash Map, Medium;"class Node:
+    def __init__(self, x, next=None, random=None):
+        self.val = x; self.next = next; self.random = random
+def copyRandomList(head: 'Node') -> 'Node':
+    if not head: return None
+    cur = head
+    while cur:
+        nxt = cur.next
+        cur.next = Node(cur.val, nxt)
+        cur = nxt
+    cur = head
+    while cur:
+        if cur.random:
+            cur.next.random = cur.random.next
+        cur = cur.next.next
+    dummy = Node(0); copy = dummy
+    cur = head
+    while cur:
+        nxt = cur.next.next
+        copy.next = cur.next; copy = copy.next
+        cur.next = nxt; cur = nxt
+    return dummy.next";
+LRU Cache;Design a data structure that follows the constraints of a Least Recently Used (LRU) cache with get/put in O(1).;"Operations:
+  put(1,1), put(2,2), get(1)->1, put(3,3) evicts 2, get(2)->-1";Hash Map + Doubly Linked List;"Move node to head on access; pop tail on overflow.";"Use dict key→node and a custom DLL with head/tail sentinels to maintain recency; update on get/put.";O(1) per op;O(capacity);https://leetcode.com/problems/lru-cache/;Design, Linked List, Medium;"class Node:
+    def __init__(self, k=0, v=0):
+        self.k, self.v = k, v
+        self.prev = self.next = None
+class LRUCache:
+    def __init__(self, capacity: int):
+        self.cap = capacity
+        self.map = {}
+        self.head = Node(); self.tail = Node()
+        self.head.next = self.tail; self.tail.prev = self.head
+    def _remove(self, node):
+        p, n = node.prev, node.next
+        p.next, n.prev = n, p
+    def _add_front(self, node):
+        node.next = self.head.next; node.prev = self.head
+        self.head.next.prev = node; self.head.next = node
+    def get(self, key: int) -> int:
+        if key not in self.map: return -1
+        node = self.map[key]; self._remove(node); self._add_front(node)
+        return node.v
+    def put(self, key: int, value: int) -> None:
+        if key in self.map:
+            node = self.map[key]; node.v = value
+            self._remove(node); self._add_front(node)
+        else:
+            node = Node(key, value); self.map[key] = node
+            self._add_front(node)
+            if len(self.map) > self.cap:
+                lru = self.tail.prev; self._remove(lru); self.map.pop(lru.k, None)";
+Min Cost Climbing Stairs;Given cost[i] for step i, you can climb 1 or 2 steps. Return min cost to reach the top.;"Input:
+  cost = [10,15,20]
+Output:
+  15";DP (rolling);"dp[i]=cost[i]+min(dp[i-1],dp[i-2]); answer is min at last two.";"Iterate computing rolling costs; start from i=2 base on cost[0], cost[1].";O(n);O(1);https://leetcode.com/problems/min-cost-climbing-stairs/;DP, Easy;"from typing import List
+def minCostClimbingStairs(cost: List[int]) -> int:
+    a, b = cost[0], cost[1]
+    for i in range(2, len(cost)):
+        a, b = b, cost[i] + min(a, b)
+    return min(a, b)";
+Coin Change II;Given amount and coins, return the number of combinations that make up that amount (unlimited coins).;"Input:
+  amount = 5, coins = [1,2,5]
+Output:
+  4";DP (order-invariant);For each coin, for a from coin..amount: dp[a]+=dp[a-coin].;"Initialize dp[0]=1; iterate coins outer to avoid permutations counting.";O(amount * len(coins));O(amount);https://leetcode.com/problems/coin-change-ii/;DP, Medium;"from typing import List
+def change(amount: int, coins: List[int]) -> int:
+    dp = [0]*(amount+1)
+    dp[0] = 1
+    for c in coins:
+        for a in range(c, amount+1):
+            dp[a] += dp[a-c]
+    return dp[amount]";
+Decode Ways;Given a string s containing only digits, return the number of ways to decode it where 'A'->1, ..., 'Z'->26.;"Input:
+  s = ""226""
+Output:
+  3";DP (linear);"dp[i]=ways for prefix i; handle single and valid two-digit mappings.";"Use two rolling vars; if s[i-1] != '0', add prev1; if 10<=two<=26, add prev2.";O(n);O(1);https://leetcode.com/problems/decode-ways/;DP, String, Medium;"def numDecodings(s: str) -> int:
+    if not s or s[0] == '0': return 0
+    a, b = 1, 1  # dp[0], dp[1]
+    for i in range(1, len(s)):
+        cur = 0
+        if s[i] != '0':
+            cur += b
+        two = int(s[i-1:i+1])
+        if 10 <= two <= 26:
+            cur += a
+        a, b = b, cur
+    return b";
+Unique Paths II;"An obstacle and free space grid is given; return the number of unique paths from top-left to bottom-right moving only right or down.";"Input:
+  obstacleGrid = [[0,0,0],[0,1,0],[0,0,0]]
+Output:
+  2";DP with Obstacles;"dp[j]+=dp[j-1] when cell is free; else dp[j]=0.";"Use a 1D DP row, initializing first cell considering obstacle; iterate rows and cols updating.";O(m*n);O(n);https://leetcode.com/problems/unique-paths-ii/;DP, Medium;"from typing import List
+def uniquePathsWithObstacles(grid: List[List[int]]) -> int:
+    m, n = len(grid), len(grid[0])
+    dp = [0]*n
+    dp[0] = 1 if grid[0][0] == 0 else 0
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == 1:
+                dp[j] = 0
+            elif j > 0:
+                dp[j] += dp[j-1]
+    return dp[-1]";
+Jump Game II;Given an array of non-negative integers where each element represents the maximum jump length, return the minimum number of jumps to reach the last index.;"Input:
+  nums = [2,3,1,1,4]
+Output:
+  2";Greedy BFS-layer;"Track current end and farthest reach; when i hits end, make a jump and reset end=farthest.";"Iterate i from 0..n-2 accumulating farthest; increment steps when crossing boundary.";O(n);O(1);https://leetcode.com/problems/jump-game-ii/;Greedy, Array, Medium;"from typing import List
+def jump(nums: List[int]) -> int:
+    steps = end = far = 0
+    for i in range(len(nums)-1):
+        far = max(far, i + nums[i])
+        if i == end:
+            steps += 1
+            end = far
+    return steps";
+Gas Station;"There are n gas stations arranged in a circle; gas[i] is the gas at station i and cost[i] is the cost to travel to i+1. Return the starting station index if you can travel around once, otherwise -1.";"Input:
+  gas = [1,2,3,4,5], cost = [3,4,5,1,2]
+Output:
+  3";Greedy (reset when sum < 0);If total gas < total cost -> impossible. Else track current tank and reset start when negative.;"Single pass over stations; maintain total and curr; update start when curr < 0.";O(n);O(1);https://leetcode.com/problems/gas-station/;Greedy, Array, Medium;"from typing import List
+def canCompleteCircuit(gas: List[int], cost: List[int]) -> int:
+    total = curr = start = 0
+    for i, (g, c) in enumerate(zip(gas, cost)):
+        total += g - c
+        curr += g - c
+        if curr < 0:
+            start = i + 1
+            curr = 0
+    return start if total >= 0 else -1";
+Insert Interval;Given a set of non-overlapping intervals sorted by start, insert a new interval and merge if necessary.;"Input:
+  intervals = [[1,3],[6,9]], newInterval = [2,5]
+Output:
+  [[1,5],[6,9]]";Merge in One Pass;Add all before, merge overlaps, then add remaining.;"Iterate intervals: append before newInterval; while overlap, merge by extending; then append the rest.";O(n);O(n);https://leetcode.com/problems/insert-interval/;Intervals, Array, Medium;"from typing import List
+def insert(intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+    res = []
+    i, n = 0, len(intervals)
+    s, e = newInterval
+    while i < n and intervals[i][1] < s:
+        res.append(intervals[i]); i += 1
+    while i < n and intervals[i][0] <= e:
+        s = min(s, intervals[i][0])
+        e = max(e, intervals[i][1])
+        i += 1
+    res.append([s, e])
+    while i < n:
+        res.append(intervals[i]); i += 1
+    return res";
+Non-overlapping Intervals;Given a collection of intervals, find the minimum number of intervals you need to remove to make the rest non-overlapping.;"Input:
+  intervals = [[1,2],[2,3],[3,4],[1,3]]
+Output:
+  1";Greedy by End Time;"Sort by end; count removals whenever overlap occurs (keep interval with earlier end).";"Track last_end; if current start < last_end, increment removals and keep min end.";O(n log n);O(1);https://leetcode.com/problems/non-overlapping-intervals/;Greedy, Sorting, Medium;"from typing import List
+def eraseOverlapIntervals(intervals: List[List[int]]) -> int:
+    intervals.sort(key=lambda x: x[1])
+    rem = 0
+    last_end = float('-inf')
+    for s, e in intervals:
+        if s >= last_end:
+            last_end = e
+        else:
+            rem += 1
+    return rem";
+Meeting Rooms II;Given an array of meeting time intervals consisting of start and end times, find the minimum number of conference rooms required.;"Input:
+  intervals = [[0,30],[5,10],[15,20]]
+Output:
+  2";Min-Heap of End Times;"Sort by start; push end into heap; pop while earliest end ≤ current start.";Heap size after processing is the number of rooms needed.;O(n log n);O(n);https://leetcode.com/problems/meeting-rooms-ii/;Heap, Intervals, Medium;"import heapq
+from typing import List
+def minMeetingRooms(intervals: List[List[int]]) -> int:
+    intervals.sort()
+    h = []
+    for s, e in intervals:
+        while h and h[0] <= s:
+            heapq.heappop(h)
+        heapq.heappush(h, e)
+    return len(h)";
+Merge Sorted Array;Given two sorted integer arrays nums1 and nums2, merge nums2 into nums1 as one sorted array in-place. nums1 has sufficient trailing space.;"Input:
+  nums1 = [1,2,3,0,0,0], m = 3; nums2 = [2,5,6], n = 3
+Output:
+  [1,2,2,3,5,6]";Two Pointers from End;Fill nums1 from back comparing last elements.;"Set i=m-1, j=n-1, k=m+n-1; while j>=0, place larger of nums1[i], nums2[j] at k and move pointers.";O(m+n);O(1);https://leetcode.com/problems/merge-sorted-array/;Two Pointers, Array, Easy;"from typing import List
+def merge(nums1: List[int], m: int, nums2: List[int], n: int) -> None:
+    i, j, k = m-1, n-1, m+n-1
+    while j >= 0:
+        if i >= 0 and nums1[i] > nums2[j]:
+            nums1[k] = nums1[i]; i -= 1
+        else:
+            nums1[k] = nums2[j]; j -= 1
+        k -= 1";
+Valid Palindrome II;Given a string s, return true if it can be a palindrome after deleting at most one character.;"Input:
+  s = ""abca""
+Output:
+  true";Two Pointers;On first mismatch, try skipping left or right once.;"Check helper(l+1,r) or helper(l,r-1) when mismatch occurs; helper checks palindrome normally.";O(n);O(1);https://leetcode.com/problems/valid-palindrome-ii/;Two Pointers, String, Easy;"def validPalindrome(s: str) -> bool:
+    def is_pal(i, j):
+        while i < j:
+            if s[i] != s[j]: return False
+            i += 1; j -= 1
+        return True
+    l, r = 0, len(s)-1
+    while l < r:
+        if s[l] != s[r]:
+            return is_pal(l+1, r) or is_pal(l, r-1)
+        l += 1; r -= 1
+    return True";
+Longest Common Prefix;Write a function to find the longest common prefix string amongst an array of strings. If there is no common prefix, return an empty string.;"Input:
+  strs = [""flower"",""flow"",""flight""]
+Output:
+  ""fl""";Horizontal Scanning;Reduce prefix by comparing with each string until it matches the start.;"Initialize prefix=strs[0]; for each s in strs[1:], shrink while not s.startswith(prefix).";O(n * k);O(1);https://leetcode.com/problems/longest-common-prefix/;Strings, Easy;"from typing import List
+def longestCommonPrefix(strs: List[str]) -> str:
+    if not strs: return """"
+    pref = strs[0]
+    for s in strs[1:]:
+        while not s.startswith(pref):
+            pref = pref[:-1]
+            if not pref: return """"
+    return pref";

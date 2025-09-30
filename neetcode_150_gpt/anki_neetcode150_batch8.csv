@@ -1,0 +1,142 @@
+Problem Name;Description;Example;Algorithm;Short Solution;Solution;Time Complexity;Space Complexity;Link;Tags;Code;Comments
+Linked List Cycle II;Given the head of a linked list, return the node where the cycle begins. If there is no cycle, return null.;"Input:
+  head = [3,2,0,-4], pos = 1
+Output:
+  node with value 2";Floyd's cycle detection + entry find;"After meeting, move one pointer to head; step both until they meet at entry.";Classic proof using distances shows meeting point offset equals cycle entry offset.;O(n);O(1);https://leetcode.com/problems/linked-list-cycle-ii/;Linked List, Two Pointers, Medium;"class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+def detectCycle(head: 'ListNode') -> 'ListNode|None':
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next; fast = fast.next.next
+        if slow is fast:
+            slow2 = head
+            while slow is not slow2:
+                slow = slow.next; slow2 = slow2.next
+            return slow
+    return None";
+Merge Two Sorted Lists;Merge two sorted linked lists and return it as a new sorted list (by splicing nodes).;"Input:
+  l1 = [1,2,4], l2 = [1,3,4]
+Output:
+  [1,1,2,3,4,4]";Two-pointer merge;"Iteratively pick smaller head and advance; append remainder.";Use a dummy head to simplify pointer manipulations.;O(m+n);O(1);https://leetcode.com/problems/merge-two-sorted-lists/;Linked List, Easy;"class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+def mergeTwoLists(a: 'ListNode', b: 'ListNode') -> 'ListNode':
+    dummy = tail = ListNode()
+    while a and b:
+        if a.val <= b.val:
+            tail.next = a; a = a.next
+        else:
+            tail.next = b; b = b.next
+        tail = tail.next
+    tail.next = a or b
+    return dummy.next";
+Swap Nodes in Pairs;Given a linked list, swap every two adjacent nodes and return its head.;"Input:
+  head = [1,2,3,4]
+Output:
+  [2,1,4,3]";Pointer rewiring in pairs;"Use a dummy head; swap (a,b) by pointing prev->b, b->a, a->next.";Iteratively advance prev by two nodes after swap.;O(n);O(1);https://leetcode.com/problems/swap-nodes-in-pairs/;Linked List, Medium;"class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+def swapPairs(head: 'ListNode') -> 'ListNode':
+    dummy = ListNode(0, head)
+    prev = dummy
+    while prev.next and prev.next.next:
+        a = prev.next; b = a.next
+        prev.next, b.next, a.next = b, a, b.next
+        prev = a
+    return dummy.next";
+Reverse Linked List II;Reverse a linked list from position left to right (1-indexed), in-place and in one pass.;"Input:
+  head = [1,2,3,4,5], left = 2, right = 4
+Output:
+  [1,4,3,2,5]";Head insertion within sublist;"Walk to node before left; then iteratively move next node after 'cur' to the front of the sublist.";This classic in-place sublist reversal uses constant extra space.;O(n);O(1);https://leetcode.com/problems/reverse-linked-list-ii/;Linked List, Medium;"class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+def reverseBetween(head: 'ListNode', left: int, right: int) -> 'ListNode':
+    dummy = ListNode(0, head)
+    prev = dummy
+    for _ in range(left-1):
+        prev = prev.next
+    cur = prev.next
+    for _ in range(right-left):
+        nxt = cur.next
+        cur.next = nxt.next
+        nxt.next = prev.next
+        prev.next = nxt
+    return dummy.next";
+Rotate List;Given a linked list, rotate the list to the right by k places.;"Input:
+  head = [1,2,3,4,5], k = 2
+Output:
+  [4,5,1,2,3]";Make it circular then break;"Connect tail to head to form a ring; find new tail at (n - k%n - 1).";"Compute length n; k%=n; advance to new tail and break the ring appropriately.";O(n);O(1);https://leetcode.com/problems/rotate-list/;Linked List, Medium;"class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+def rotateRight(head: 'ListNode', k: int) -> 'ListNode':
+    if not head or not head.next or k == 0: return head
+    n = 1; tail = head
+    while tail.next:
+        tail = tail.next; n += 1
+    k %= n
+    if k == 0: return head
+    tail.next = head
+    steps = n - k - 1
+    new_tail = head
+    for _ in range(steps):
+        new_tail = new_tail.next
+    new_head = new_tail.next
+    new_tail.next = None
+    return new_head";
+Intersection of Two Linked Lists;Given the heads of two singly linked lists, return the node at which the two lists intersect, or null if they do not intersect.;"Input:
+  listA = [4,1,8,4,5], listB = [5,6,1,8,4,5]
+Output:
+  node with value 8";Two-pointer switch heads;"Walk pointers pa and pb; when reaching end, jump to other head; they meet at intersection or null.";Because lengths are equalized after switching, pointers align at the intersection after at most m+n steps.;O(m+n);O(1);https://leetcode.com/problems/intersection-of-two-linked-lists/;Linked List, Easy;"class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+def getIntersectionNode(a: 'ListNode', b: 'ListNode') -> 'ListNode|None':
+    pa, pb = a, b
+    while pa is not pb:
+        pa = pa.next if pa else b
+        pb = pb.next if pb else a
+    return pa";
+Palindrome Linked List;Given the head of a singly linked list, return true if it is a palindrome.;"Input:
+  head = [1,2,2,1]
+Output:
+  true";Find middle, reverse second half, compare;"Use slow/fast to middle; reverse second half; compare and optionally restore.";"Return early on mismatch; O(1) space.";O(n);O(1);https://leetcode.com/problems/palindrome-linked-list/;Linked List, Two Pointers, Easy;"class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+def isPalindrome(head: 'ListNode') -> bool:
+    if not head or not head.next: return True
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next; fast = fast.next.next
+    prev, cur = None, slow
+    while cur:
+        nxt = cur.next; cur.next = prev; prev, cur = cur, nxt
+    p1, p2 = head, prev
+    ok = True
+    while p2:
+        if p1.val != p2.val: ok = False; break
+        p1 = p1.next; p2 = p2.next
+    return ok";
+Search Insert Position;Given a sorted array of distinct integers and a target value, return the index if found. If not, return the index where it would be inserted in order.;"Input:
+  nums = [1,3,5,6], target = 5
+Output:
+  2";Binary Search;Standard lower_bound (first ≥ target).;If target not found, return left pointer upon termination.;O(log n);O(1);https://leetcode.com/problems/search-insert-position/;Binary Search, Easy;"from typing import List
+def searchInsert(nums: List[int], target: int) -> int:
+    l, r = 0, len(nums)
+    while l < r:
+        m = (l + r)//2
+        if nums[m] < target: l = m + 1
+        else: r = m
+    return l";
+Search a 2D Matrix II;Given an m x n matrix where each row and column is sorted ascending, return true if a target value is in the matrix.;"Input:
+  matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 5
+Output:
+  true";Z-search (start top-right);"If current > target, move left; else move down.";This walks at most m+n steps in the grid.;O(m+n);O(1);https://leetcode.com/problems/search-a-2d-matrix-ii/;Matrix, Binary Search, Medium;"from typing import List
+def searchMatrix2(matrix: List[List[int]], target: int) -> bool:
+    if not matrix or not matrix[0]: return False
+    i, j = 0, len(matrix[0]) - 1
+    while i < len(matrix) and j >= 0:
+        x = matrix[i][j]
+        if x == target: return True
+        if x > target: j -= 1
+        else: i += 1
+    return False";

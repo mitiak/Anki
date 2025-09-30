@@ -1,0 +1,357 @@
+Problem Name;Description;Example;Algorithm;Short Solution;Solution;Time Complexity;Space Complexity;Link;Tags;Code;Comments
+Search a 2D Matrix;Given an m x n matrix where each row is sorted ascending and the first integer of each row is greater than the last integer of the previous row, search for a target value.;"Input:
+  matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
+Output:
+  true";Binary Search;Treat as a flat sorted array of length m*n and binary search by index mapping.;"Binary search on [0, m*n-1]; map mid to (mid//n, mid%n) to compare with target and move bounds accordingly.";O(log (m*n));O(1);https://leetcode.com/problems/search-a-2d-matrix/;Matrix, Binary Search, Medium;"from typing import List
+def searchMatrix(matrix: List[List[int]], target: int) -> bool:
+    if not matrix or not matrix[0]: return False
+    m, n = len(matrix), len(matrix[0])
+    l, r = 0, m*n - 1
+    while l <= r:
+        mid = (l + r)//2
+        x = matrix[mid//n][mid % n]
+        if x == target: return True
+        if x < target: l = mid + 1
+        else: r = mid - 1
+    return False";
+Set Matrix Zeroes;Given an m x n integer matrix, if an element is 0, set its entire row and column to 0 in-place.;"Input:
+  [[1,1,1],[1,0,1],[1,1,1]]
+Output:
+  [[1,0,1],[0,0,0],[1,0,1]]";In-Place Markers;"Use first row/col as zero markers; keep separate flags for initial first row/col zero.";"Scan to mark zeros on first row/col; zero inner cells using markers; finally zero first row/col if flagged.";O(m*n);O(1);https://leetcode.com/problems/set-matrix-zeroes/;Matrix, In-Place, Medium;"from typing import List
+def setZeroes(a: List[List[int]]) -> None:
+    m, n = len(a), len(a[0])
+    fr = any(a[0][j]==0 for j in range(n))
+    fc = any(a[i][0]==0 for i in range(m))
+    for i in range(1, m):
+        for j in range(1, n):
+            if a[i][j]==0:
+                a[i][0]=0; a[0][j]=0
+    for i in range(1, m):
+        for j in range(1, n):
+            if a[i][0]==0 or a[0][j]==0:
+                a[i][j]=0
+    if fr:
+        for j in range(n): a[0][j]=0
+    if fc:
+        for i in range(m): a[i][0]=0";
+Rotate Image;You are given an n x n 2D matrix representing an image. Rotate the image by 90 degrees (clockwise) in-place.;"Input:
+  [[1,2,3],[4,5,6],[7,8,9]]
+Output:
+  [[7,4,1],[8,5,2],[9,6,3]]";Transpose + Reverse Rows;Swap across diagonal then reverse each row.;First transpose the matrix (swap a[i][j] with a[j][i] for i<j). Then reverse each row in-place.;O(n^2);O(1);https://leetcode.com/problems/rotate-image/;Matrix, In-Place, Medium;"from typing import List
+def rotate(matrix: List[List[int]]) -> None:
+    n = len(matrix)
+    for i in range(n):
+        for j in range(i+1, n):
+            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+    for i in range(n):
+        matrix[i].reverse()";
+Spiral Matrix;Given an m x n matrix, return all elements of the matrix in spiral order.;"Input:
+  [[1,2,3],[4,5,6],[7,8,9]]
+Output:
+  [1,2,3,6,9,8,7,4,5]";Layer-by-Layer;Maintain top,bottom,left,right bounds and peel layers.;Iteratively traverse top row, right column, bottom row, left column while shrinking bounds and checking crossing.;O(m*n);O(1) extra;https://leetcode.com/problems/spiral-matrix/;Matrix, Simulation, Medium;"from typing import List
+def spiralOrder(a: List[List[int]]) -> List[int]:
+    res = []
+    if not a: return res
+    top, left, bottom, right = 0, 0, len(a)-1, len(a[0])-1
+    while top <= bottom and left <= right:
+        for j in range(left, right+1): res.append(a[top][j])
+        top += 1
+        for i in range(top, bottom+1): res.append(a[i][right])
+        right -= 1
+        if top <= bottom:
+            for j in range(right, left-1, -1): res.append(a[bottom][j])
+            bottom -= 1
+        if left <= right:
+            for i in range(bottom, top-1, -1): res.append(a[i][left])
+            left += 1
+    return res";
+Word Search II;Given a 2D board and a list of words, find all words that can be formed by connecting adjacent cells (horizontally or vertically) without reusing a cell.;"Input:
+  board = [[""o"",""a"",""a"",""n""],[""e"",""t"",""a"",""e""],[""i"",""h"",""k"",""r""],[""i"",""f"",""l"",""v""]], words = [""oath"",""pea"",""eat"",""rain""]
+Output:
+  [""eat"",""oath""]";Trie + DFS Backtracking;"Build trie of words; DFS from each cell, pruning by trie branches and marking visited in-place.";"Insert words into a trie with end markers; during DFS, when a word ends, add to result and optionally mark as found to avoid duplicates.";O(m*n*α);O(total chars);https://leetcode.com/problems/word-search-ii/;Trie, Backtracking, Hard;"from typing import List, Dict
+def findWords(board: List[List[str]], words: List[str]) -> List[str]:
+    root: Dict = {}
+    END = ""#""
+    for w in words:
+        node = root
+        for ch in w:
+            node = node.setdefault(ch, {})
+        node[END] = w
+    m, n = len(board), len(board[0])
+    res = []
+    def dfs(i, j, node):
+        ch = board[i][j]
+        if ch not in node: return
+        nxt = node[ch]
+        word = nxt.pop('#', None)
+        if word:
+            res.append(word)
+        board[i][j] = '*'
+        for di, dj in ((1,0),(-1,0),(0,1),(0,-1)):
+            ni, nj = i+di, j+dj
+            if 0<=ni<m and 0<=nj<n and board[ni][nj] != '*':
+                dfs(ni, nj, nxt)
+        board[i][j] = ch
+        if not nxt:
+            node.pop(ch, None)
+    for i in range(m):
+        for j in range(n):
+            dfs(i, j, root)
+    return res";
+N-Queens;Place n queens on an n x n chessboard so that no two queens attack each other. Return all distinct solutions as boards of 'Q' and '.'.;"Input:
+  n = 4
+Output:
+  [["".Q.."",""...Q"",""Q..."",""..Q.""],[""..Q."",""Q..."",""...Q"","".Q..""]]";Backtracking with Column/Diag Sets;DFS row by row, placing a queen if column and diagonals are free.;Track used columns and diagonals (r-c, r+c). Build solution strings on success.;O(n!);O(n) recursion + output;https://leetcode.com/problems/n-queens/;Backtracking, Hard;"def solveNQueens(n: int):
+    res, cols, d1, d2, board = [], set(), set(), set(), [["".""]*n for _ in range(n)]
+    def dfs(r):
+        if r == n:
+            res.append(["""".join(row) for row in board]); return
+        for c in range(n):
+            if c in cols or (r-c) in d1 or (r+c) in d2: 
+                continue
+            cols.add(c); d1.add(r-c); d2.add(r+c); board[r][c] = ""Q""
+            dfs(r+1)
+            board[r][c] = "".""; cols.remove(c); d1.remove(r-c); d2.remove(r+c)
+    dfs(0); return res";
+Sudoku Solver;Write a program to solve a 9x9 Sudoku puzzle by filling empty cells ('.') so that each row, column, and 3x3 sub-box contains the digits 1-9 exactly once.;"Input:
+  board = a valid partially filled 9x9
+Output:
+  board solved in-place";Backtracking + Bitmasks;"Track row/col/box availability with bit masks; choose next empty with least candidates; try digits recursively.";"Using bitmasks speeds constraint checks; backtrack on conflicts until grid is solved.";O(9^(empty)) worst;O(1);https://leetcode.com/problems/sudoku-solver/;Backtracking, Hard;"from typing import List
+def solveSudoku(board: List[List[str]]) -> None:
+    rows = [0]*9; cols = [0]*9; boxes = [0]*9
+    empties = []
+    for i in range(9):
+        for j in range(9):
+            if board[i][j] == '.':
+                empties.append((i,j))
+            else:
+                d = 1 << (ord(board[i][j]) - 49)
+                rows[i] |= d; cols[j] |= d; boxes[(i//3)*3 + j//3] |= d
+    def dfs(k=0):
+        if k == len(empties): return True
+        i, j = empties[k]
+        b = (i//3)*3 + j//3
+        mask = ~(rows[i] | cols[j] | boxes[b]) & 0x1FF
+        while mask:
+            bit = mask & -mask; mask -= bit
+            d = bit.bit_length()
+            board[i][j] = chr(48 + d)
+            rows[i] |= bit; cols[j] |= bit; boxes[b] |= bit
+            if dfs(k+1): return True
+            rows[i] ^= bit; cols[j] ^= bit; boxes[b] ^= bit
+        board[i][j] = '.'
+        return False
+    dfs()";
+Multiply Strings;Given two non-negative integers num1 and num2 represented as strings, return the product as a string without using big integer libraries.;"Input:
+  num1 = ""123"", num2 = ""45""
+Output:
+  ""5535""";Grade-School Multiplication;Reverse and multiply digits, accumulate with carry in an array, then strip leading zeros.;"Simulate manual multiplication; convert digits to ints, accumulate products at i+j positions, handle carries.";O(m*n);O(m+n);https://leetcode.com/problems/multiply-strings/;Math, String, Medium;"def multiply(num1: str, num2: str) -> str:
+    if num1 == ""0"" or num2 == ""0"": return ""0""
+    m, n = len(num1), len(num2)
+    res = [0]*(m+n)
+    for i in range(m-1, -1, -1):
+        for j in range(n-1, -1, -1):
+            res[i+j+1] += (ord(num1[i])-48) * (ord(num2[j])-48)
+    carry = 0
+    for k in range(m+n-1, -1, -1):
+        total = res[k] + carry
+        res[k] = total % 10
+        carry = total // 10
+    i = 0
+    while i < len(res) and res[i] == 0: i += 1
+    return ''.join(str(d) for d in res[i:]) or ""0""";
+Valid Sudoku;Determine if a 9x9 Sudoku board is valid. Only the filled cells need to be validated according to Sudoku rules.;"Input:
+  board = partially filled 9x9
+Output:
+  true/false";Sets / Bitmasks;"Track seen digits in rows, cols, and boxes; detect duplicates.";For each non-empty cell, compute box id and check if digit already present in that row/col/box.;O(81);O(1);https://leetcode.com/problems/valid-sudoku/;Hash Set, Matrix, Medium;"from typing import List
+def isValidSudoku(board: List[List[str]]) -> bool:
+    rows = [0]*9; cols = [0]*9; boxes = [0]*9
+    for i in range(9):
+        for j in range(9):
+            c = board[i][j]
+            if c == '.': continue
+            bit = 1 << (ord(c) - 49)
+            b = (i//3)*3 + j//3
+            if rows[i] & bit or cols[j] & bit or boxes[b] & bit:
+                return False
+            rows[i] |= bit; cols[j] |= bit; boxes[b] |= bit
+    return True";
+Basic Calculator II;Given a string s representing a basic arithmetic expression with non-negative integers and operators +, -, *, / (no parentheses), evaluate it. Division truncates toward zero.;"Input:
+  s = ""3+2*2""
+Output:
+  7";Single Pass with Stack (or running last term);"Track current number and last term; on +/-, push previous term; on */ divide the last term appropriately.";Use a stack or running sum+last term to handle precedence without parentheses.;O(n);O(n) or O(1);https://leetcode.com/problems/basic-calculator-ii/;Stack, Math, Medium;"def calculate(s: str) -> int:
+    s += '+'
+    num = 0; last = 0; res = 0; op = '+'
+    i = 0
+    while i < len(s):
+        c = s[i]
+        if c.isdigit():
+            num = num*10 + int(c)
+        elif c == ' ':
+            pass
+        else:
+            if op == '+':
+                res += last; last = num
+            elif op == '-':
+                res += last; last = -num
+            elif op == '*':
+                last = last * num
+            else:
+                last = int(last / num)
+            op = c; num = 0
+        i += 1
+    return res + last";
+Find All Anagrams in a String;Given two strings s and p, return all start indices of p's anagrams in s.;"Input:
+  s = ""cbaebabacd"", p = ""abc""
+Output:
+  [0,6]";Sliding Window + Counts;Maintain fixed-size window counts and compare to target counts.;"Use arrays of length 26; slide window by adding new char and removing old, compare via count of matches.";O(n);O(1);https://leetcode.com/problems/find-all-anagrams-in-a-string/;Strings, Sliding Window, Medium;"from typing import List
+def findAnagrams(s: str, p: str) -> List[int]:
+    if len(p) > len(s): return []
+    need = [0]*26
+    for ch in p: need[ord(ch)-97] += 1
+    win = [0]*26
+    res = []
+    for i, ch in enumerate(s):
+        win[ord(ch)-97] += 1
+        if i >= len(p):
+            win[ord(s[i-len(p)])-97] -= 1
+        if win == need:
+            res.append(i-len(p)+1)
+    return res";
+Find the Duplicate Number;Given an array nums containing n+1 integers where each integer is in [1, n] inclusive, there is exactly one duplicate number. Find the duplicate using O(1) extra space without modifying the array.;"Input:
+  nums = [1,3,4,2,2]
+Output:
+  2";Floyd's Cycle Detection on Index Graph;"Treat nums as next pointers; find cycle entry.";"Phase 1: find intersection of slow and fast; Phase 2: move one pointer to start and step both until they meet at duplicate.";O(n);O(1);https://leetcode.com/problems/find-the-duplicate-number/;Cycle Detection, Array, Medium;"from typing import List
+def findDuplicate(nums: List[int]) -> int:
+    slow = fast = nums[0]
+    while True:
+        slow = nums[slow]
+        fast = nums[nums[fast]]
+        if slow == fast: break
+    slow2 = nums[0]
+    while slow != slow2:
+        slow = nums[slow]
+        slow2 = nums[slow2]
+    return slow";
+Merge K Sorted Arrays;Given k sorted arrays, merge them into one sorted array.;"Input:
+  [[1,4,5],[1,3,4],[2,6]]
+Output:
+  [1,1,2,3,4,4,5,6]";Min-Heap (k-way merge);Push first elements and pop smallest while pushing next from same array.;Analogous to merging k lists but using array indices instead of nodes.;O(N log k);O(k);https://leetcode.com/problems/merge-k-sorted-lists/;Heap, Array, Hard;"import heapq
+from typing import List
+def mergeKArrays(arrs: List[List[int]]) -> List[int]:
+    h = []
+    res = []
+    for i, arr in enumerate(arrs):
+        if arr:
+            heapq.heappush(h, (arr[0], i, 0))
+    while h:
+        val, i, j = heapq.heappop(h)
+        res.append(val)
+        if j+1 < len(arrs[i]):
+            heapq.heappush(h, (arrs[i][j+1], i, j+1))
+    return res";
+Majority Element II;Given an integer array of size n, find all elements that appear more than ⌊n/3⌋ times.;"Input:
+  [3,2,3]
+Output:
+  [3]";Boyer-Moore (two candidates);Track up to two candidates and counts, then verify.;"First pass to find potential candidates; second pass to confirm counts > n/3.";O(n);O(1);https://leetcode.com/problems/majority-element-ii/;Array, Voting, Medium;"from typing import List
+def majorityElement(nums: List[int]) -> List[int]:
+    c1 = c2 = None
+    n1 = n2 = 0
+    for x in nums:
+        if x == c1: n1 += 1
+        elif x == c2: n2 += 1
+        elif n1 == 0: c1, n1 = x, 1
+        elif n2 == 0: c2, n2 = x, 1
+        else: n1 -= 1; n2 -= 1
+    res = []
+    for c in (c1, c2):
+        if c is not None and nums.count(c) > len(nums)//3:
+            if c not in res: res.append(c)
+    return res";
+Integer to Roman;Convert an integer to a Roman numeral.;"Input:
+  num = 1994
+Output:
+  ""MCMXCIV""";Greedy with Value Map;Subtract highest possible symbol repeatedly.;Use arrays of values and symbols including subtractive pairs, building the string greedily.;O(1) (bounded);O(1);https://leetcode.com/problems/integer-to-roman/;Math, String, Medium;"def intToRoman(num: int) -> str:
+    vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1]
+    syms = [""M"",""CM"",""D"",""CD"",""C"",""XC"",""L"",""XL"",""X"",""IX"",""V"",""IV"",""I""]
+    res = []
+    for v, s in zip(vals, syms):
+        cnt, num = divmod(num, v)
+        res.append(s*cnt)
+    return ''.join(res)";
+Roman to Integer;Convert a Roman numeral to an integer.;"Input:
+  s = ""MCMXCIV""
+Output:
+  1994";Left-to-Right with Subtractive Rule;"If current value < next value, subtract; else add.";"Map symbols to values; sum with subtractive adjustment.";O(1);O(1);https://leetcode.com/problems/roman-to-integer/;Math, String, Easy;"def romanToInt(s: str) -> int:
+    m = {'I':1,'V':5,'X':10,'L':50,'C':100,'D':500,'M':1000}
+    res = 0
+    for i, ch in enumerate(s):
+        v = m[ch]
+        if i+1 < len(s) and v < m[s[i+1]]:
+            res -= v
+        else:
+            res += v
+    return res";
+Longest Palindromic Subsequence;Given a string s, find the length of the longest palindromic subsequence in s.;"Input:
+  s = ""bbbab""
+Output:
+  4";DP on Intervals;dp[i][j] = dp[i+1][j-1] + 2 if s[i]==s[j] else max(dp[i+1][j], dp[i][j-1]).;"Fill table from shorter intervals to longer; return dp[0][n-1].";O(n^2);O(n^2);https://leetcode.com/problems/longest-palindromic-subsequence/;DP, String, Medium;"def longestPalindromeSubseq(s: str) -> int:
+    n = len(s)
+    dp = [[0]*n for _ in range(n)]
+    for i in range(n-1, -1, -1):
+        dp[i][i] = 1
+        for j in range(i+1, n):
+            if s[i] == s[j]:
+                dp[i][j] = dp[i+1][j-1] + 2
+            else:
+                dp[i][j] = max(dp[i+1][j], dp[i][j-1])
+    return dp[0][n-1]";
+Edit Distance;Given two strings word1 and word2, return the minimum number of operations (insert, delete, replace) to convert word1 to word2.;"Input:
+  word1 = ""horse"", word2 = ""ros""
+Output:
+  3";DP (Levenshtein);dp[i][j] = 1 + min(del, ins, rep) or carry dp[i-1][j-1] if equal.;"Use 2 rows rolling array to save space; initialize base cases for empty prefixes.";O(m*n);O(min(m,n));https://leetcode.com/problems/edit-distance/;DP, String, Hard;"def minDistance(a: str, b: str) -> int:
+    m, n = len(a), len(b)
+    if n > m:
+        a, b, m, n = b, a, n, m
+    prev = list(range(n+1))
+    for i in range(1, m+1):
+        cur = [i] + [0]*n
+        for j in range(1, n+1):
+            if a[i-1] == b[j-1]:
+                cur[j] = prev[j-1]
+            else:
+                cur[j] = 1 + min(prev[j], cur[j-1], prev[j-1])
+        prev = cur
+    return prev[n]";
+Minimum Path Sum;Given a grid filled with non-negative numbers, find a path from top-left to bottom-right minimizing the sum of all numbers along the path (moving only down or right).;"Input:
+  [[1,3,1],[1,5,1],[4,2,1]]
+Output:
+  7";DP (1D);dp[j] = grid[i][j] + min(dp[j], dp[j-1]).;"Initialize first row cumulatively; iterate rows updating in place on the 1D DP array.";O(m*n);O(n);https://leetcode.com/problems/minimum-path-sum/;DP, Grid, Medium;"from typing import List
+def minPathSum(grid: List[List[int]]) -> int:
+    m, n = len(grid), len(grid[0])
+    dp = [10**9]*n
+    for i in range(m):
+        for j in range(n):
+            if i == 0 and j == 0:
+                dp[j] = grid[i][j]
+            elif i == 0:
+                dp[j] = dp[j-1] + grid[i][j]
+            elif j == 0:
+                dp[j] = dp[j] + grid[i][j]
+            else:
+                dp[j] = min(dp[j], dp[j-1]) + grid[i][j]
+    return dp[-1]";
+Coin Change (DFS + Memo);"Given coins of different denominations and a total amount, return the fewest coins needed to make up that amount; return -1 if impossible. (Top-down memoized version)";"Input:
+  coins = [1,2,5], amount = 11
+Output:
+  3";DFS + Memoization;"Recursive search with memo on remaining amount; try each coin and prune when impossible.";"Top-down often simpler to reason about; ensure memo stores -1 for impossible states to avoid recomputation.";O(amount * len(coins)) approx;O(amount);https://leetcode.com/problems/coin-change/;DP, Recursion, Medium;"from functools import lru_cache
+from typing import List
+def coinChange_topdown(coins: List[int], amount: int) -> int:
+    @lru_cache(None)
+    def dfs(rem):
+        if rem == 0: return 0
+        if rem < 0: return 10**9
+        best = min(dfs(rem - c) + 1 for c in coins)
+        return best
+    ans = dfs(amount)
+    return ans if ans < 10**9 else -1";
