@@ -1,0 +1,442 @@
+Problem Name,Description,Example,Algorithm,Short Solution,Solution,Time Complexity,Space Complexity,Link,Code,Comments
+Basic Calculator,"Evaluate arithmetic expression with +, -, parentheses, and spaces.",s='(1+(4+5+2)-3)+(6+8)' -> 23,Shunting-yard style or stack with running sign/num; handle parentheses by pushing frame.,Single pass; use stack for results and signs; accumulate number; on ')' pop frame.,"Iterate chars; when digit build num; on '+'/'-' add signed num to result; on '(' push (res, sign) and reset; on ')' finalize current and combine with stack.",O(n),O(n) worst (stack),https://leetcode.com/problems/basic-calculator/,"def calculate(s: str) -> int:
+    res = 0; sign = 1; num = 0; st = []
+    for c in s + '+':
+        if c.isdigit(): num = num*10 + int(c)
+        elif c in '+-': res += sign*num; num = 0; sign = 1 if c=='+' else -1
+        elif c == '(':
+            st.append((res, sign)); res, sign = 0, 1
+        elif c == ')':
+            res += sign*num; num = 0
+            prev, psign = st.pop(); res = prev + psign*res
+    return res",Classic stack expression evaluator.
+Basic Calculator II,"Evaluate expression with +, -, *, / without parentheses.",s='3+2*2' -> 7,"One-pass with last term; apply * and / immediately, postpone +/-.","Track cur number, last term, and total; on operator update.",Iterate with sentinel '+'; on operator: if prev is '+/-' add last to total and set last=±num; if '*' or '/' mutate last= last*or/ num; reset num.,O(n),O(1),https://leetcode.com/problems/basic-calculator-ii/,"def calculate(s: str) -> int:
+    total = 0; last = 0; num = 0; op = '+'
+    for c in s + '+':
+        if c == ' ': continue
+        if c.isdigit(): num = num*10 + int(c)
+        else:
+            if op == '+': total += last; last = num
+            elif op == '-': total += last; last = -num
+            elif op == '*': last *= num
+            elif op == '/': last = int(last/num)
+            op, num = c, 0
+    return total + last",Using integer truncation toward zero.
+Lowest Common Ancestor of a Binary Tree,Find LCA of two nodes in a binary tree.,"p=5, q=1 in root=[3,5,1,...] -> 3",DFS returning node if found in subtree; if both sides non-null -> root is LCA.,Post-order recursion returning p/q/root.,"If root in {None,p,q} return root; L=dfs(root.left); R=dfs(root.right); if L and R return root else L or R.",O(n),O(h) recursion,https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/,"def lowestCommonAncestor(r,p,q):
+    if not r or r==p or r==q: return r
+    L=lowestCommonAncestor(r.left,p,q)
+    R=lowestCommonAncestor(r.right,p,q)
+    return r if L and R else (L or R)",
+Valid Word Abbreviation,Check if abbreviation is valid for a word.,"word='internationalization', abbr='i12iz4n' -> True","Two pointers; parse numbers (no leading zero), skip letters accordingly.","Advance i over digits to get k, advance j by k; otherwise chars must match.",If digit starts with '0' -> False; sum digits into k; j+=k; else compare word[j]==abbr[i].,O(n),O(1),https://leetcode.com/problems/valid-word-abbreviation/,"def valid(word,abbr):
+    i=j=0
+    while i<len(abbr) and j<len(word):
+        if abbr[i].isdigit():
+            if abbr[i]=='0': return False
+            k=0
+            while i<len(abbr) and abbr[i].isdigit():
+                k=k*10+int(abbr[i]); i+=1
+            j+=k
+        else:
+            if word[j]!=abbr[i]: return False
+            i+=1; j+=1
+    return i==len(abbr) and j==len(word)",
+Minimum Remove to Make Valid Parentheses,Remove minimum parentheses to make string valid.,s='a)b(c)d' -> 'ab(c)d',Two passes or stack to mark invalid indices.,"Scan and count balance, mark extra ')' and later extra '('; build result.",Forward: skip ')' if balance==0 else balance--. Backward: skip '(' if balance>0 else keep.,O(n),O(n) (or O(1) extra with two passes),https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/,"def minRemove(s):
+    s=list(s); bal=0
+    for i,c in enumerate(s):
+        if c=='(': bal+=1
+        elif c==')':
+            if bal==0: s[i]=''
+            else: bal-=1
+    for i in range(len(s)-1,-1,-1):
+        if bal and s[i]=='(': s[i]=''; bal-=1
+    return ''.join(s)",
+Merge Sorted Array,Merge nums2 into nums1 in-place sorted.,"nums1=[1,2,3,0,0,0], m=3; nums2=[2,5,6], n=3 -> [1,2,2,3,5,6]",Two pointers from the end writing backward.,"i=m-1, j=n-1, k=m+n-1; place the larger.","While j>=0 place max(nums1[i], nums2[j]) into k; move pointers.",O(m+n),O(1),https://leetcode.com/problems/merge-sorted-array/,"def merge(a,m,b,n):
+    i,j,k=m-1,n-1,m+n-1
+    while j>=0:
+        if i>=0 and a[i]>b[j]: a[k]=a[i]; i-=1
+        else: a[k]=b[j]; j-=1
+        k-=1",
+Minimum Window Substring,Smallest substring of s that contains all chars of t.,"s='ADOBECODEBANC', t='ABC' -> 'BANC'",Sliding window with counts and formed counter.,"Expand right until valid, then shrink left.","Need counts of t; move r adding counts; when all met, move l to minimize.",O(|s|+|t|),O(Σ),https://leetcode.com/problems/minimum-window-substring/,"from collections import Counter
+
+def minWindow(s,t):
+    need=Counter(t); miss=len(t); i=I=J=0
+    for j,c in enumerate(s,1):
+        miss-=need[c]>0; need[c]-=1
+        if miss==0:
+            while i<j and need[s[i]]<0: need[s[i]]+=1; i+=1
+            if not I or j-i<J-I: I,J=i,j
+            need[s[i]]+=1; miss+=1; i+=1
+    return s[I:J]",
+Binary Search Tree Iterator,In-order iterator over BST.,Calls next() yield nodes ascending.,Stack of left spine; push right subtree when advancing.,Maintain stack of nodes; next() pop and push right-left descent.,Constructor pushes all left to stack; hasNext() bool(stack).,next(): O(1) amortized,Space: O(h),https://leetcode.com/problems/binary-search-tree-iterator/,"class BSTIterator:
+  def __init__(s,root): s.st=[]; s._push(root)
+  def _push(s,n):
+    while n: s.st.append(n); n=n.left
+  def next(s): n=s.st.pop(); s._push(n.right); return n.val
+  def hasNext(s): return bool(s.st)",
+Find Peak Element,Find index of a peak (greater than neighbors).,"[1,2,1] -> 1",Binary search using slope direction.,If mid<mid+1 go right else left.,Treat out-of-bounds as -∞; converge to a peak.,O(log n),O(1),https://leetcode.com/problems/find-peak-element/,"def findPeak(a):
+    l,r=0,len(a)-1
+    while l<r:
+        m=(l+r)//2
+        if a[m]<a[m+1]: l=m+1
+        else: r=m
+    return l",
+Valid Palindrome III,Check if string can be palindrome after removing at most k characters.,"s='abcdeca', k=2 -> True",LCS/DP: s vs reverse(s) or DP on edits; need LPS >= n-k.,Compute LPS length; return LPS >= n-k.,DP[i][j]=LPS of s[i:j]; if s[i]==s[j] -> 2+DP[i+1][j-1] else max of neighbors.,O(n^2),O(n^2),https://leetcode.com/problems/valid-palindrome-iii/,"def isValidPalindrome(s,k):
+    n=len(s); dp=[[0]*n for _ in range(n)]
+    for i in range(n-1,-1,-1):
+        dp[i][i]=1
+        for j in range(i+1,n):
+            dp[i][j]=2+dp[i+1][j-1] if s[i]==s[j] else max(dp[i+1][j],dp[i][j-1])
+    return dp[0][n-1] >= n-k",
+Shortest Path in Binary Matrix,"Shortest path from (0,0) to (n-1,n-1) moving 8 dirs through 0s.","[[0,1],[1,0]] -> 2",BFS over grid with 8 neighbors.,Start if grid[0][0]==0; push with dist 1; visit neighbors.,Use queue; mark visited by setting 1 or visited set.,O(n^2),O(n^2),https://leetcode.com/problems/shortest-path-in-binary-matrix/,"from collections import deque
+
+def shortestPathBinaryMatrix(g):
+    n=len(g)
+    if g[0][0] or g[-1][-1]: return -1
+    q=deque([(0,0,1)]); g[0][0]=1
+    dirs=[(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]
+    while q:
+        i,j,d=q.popleft()
+        if i==n-1 and j==n-1: return d
+        for di,dj in dirs:
+            x,y=i+di,j+dj
+            if 0<=x<n and 0<=y<n and g[x][y]==0:
+                g[x][y]=1; q.append((x,y,d+1))
+    return -1",
+LRU Cache,Implement LRU with get/put O(1).,"Ops: put(1,1); get(1) -> 1",Hash map + doubly linked list.,Move node to head on access; evict tail on overflow.,Use pseudo head/tail; dict maps key->node.,O(1) per op,O(capacity),https://leetcode.com/problems/lru-cache/,"class LRUCache:
+  class Node:
+    def __init__(s,k=0,v=0): s.k=k; s.v=v; s.p=s.n=None
+  def __init__(s,cap): s.c=cap; s.m={}; s.h=s.Node(); s.t=s.Node(); s.h.n=s.t; s.t.p=s.h
+  def _add(s,x): x.p=s.h; x.n=s.h.n; s.h.n.p=x; s.h.n=x
+  def _rm(s,x): x.p.n=x.n; x.n.p=x.p
+  def get(s,k):
+    if k not in s.m: return -1
+    x=s.m[k]; s._rm(x); s._add(x); return x.v
+  def put(s,k,v):
+    if k in s.m: s._rm(s.m[k])
+    x=s.Node(k,v); s.m[k]=x; s._add(x)
+    if len(s.m)>s.c: y=s.t.p; s._rm(y); s.m.pop(y.k)",
+Copy List with Random Pointer,Deep copy a linked list with random pointers.,A->B->C with randoms.,Interleave cloned nodes; fix randoms; split lists.,A->A'->B->B'... then set A'.random=A.random'.,Three passes approach.,O(n),O(1) extra,https://leetcode.com/problems/copy-list-with-random-pointer/,"def copyRandomList(h):
+    if not h: return None
+    cur=h
+    while cur: nxt=cur.next; cur.next=Node(cur.val,nxt); cur=nxt
+    cur=h
+    while cur: 
+        if cur.random: cur.next.random=cur.random.next
+        cur=cur.next.next
+    dummy=Node(0); p=dummy; cur=h
+    while cur:
+        p.next=cur.next; p=p.next
+        cur.next=cur.next.next; cur=cur.next
+    return dummy.next",
+Clone Graph,Clone connected undirected graph.,"Node 1 connected to 2,3.",DFS/BFS with hashmap old->new.,"If node unseen, create copy and recurse neighbors.",Visited dict prevents cycles.,O(V+E),O(V),https://leetcode.com/problems/clone-graph/,"def cloneGraph(node):
+    if not node: return None
+    m={}
+    def dfs(x):
+        if x in m: return m[x]
+        cp=Node(x.val); m[x]=cp
+        for nb in x.neighbors: cp.neighbors.append(dfs(nb))
+        return cp
+    return dfs(node)",
+Sum Root to Leaf Numbers,Sum numbers formed by root-to-leaf paths.,1->2->3 => 123; total sum.,DFS carrying current value.,At leaf add path value.,cur=cur*10+node.val; recurse.,O(n),O(h),https://leetcode.com/problems/sum-root-to-leaf-numbers/,"def sumNumbers(r):
+    def dfs(n,cur):
+        if not n: return 0
+        cur=cur*10+n.val
+        if not n.left and not n.right: return cur
+        return dfs(n.left,cur)+dfs(n.right,cur)
+    return dfs(r,0)",
+Valid Palindrome,Check alphanumeric palindrome ignoring cases.,"s='A man, a plan, a canal: Panama' -> True",Two pointers; skip non-alnum.,Compare ends while moving inward.,Lowercase and check .isalnum().,O(n),O(1),https://leetcode.com/problems/valid-palindrome/,"def isPalindrome(s):
+    i,j=0,len(s)-1
+    while i<j:
+        while i<j and not s[i].isalnum(): i+=1
+        while i<j and not s[j].isalnum(): j-=1
+        if s[i].lower()!=s[j].lower(): return False
+        i+=1; j-=1
+    return True",
+Binary Tree Maximum Path Sum,Max path sum of any path in binary tree.,"Tree [-10,9,20,15,7] -> 42",DFS returning max gain; update global best with left+right+node.,"At each node: best_through = max(0,L)+max(0,R)+val.","Return val+max(0,max(L,R)) upward.",O(n),O(h),https://leetcode.com/problems/binary-tree-maximum-path-sum/,"def maxPathSum(r):
+    best=-10**9
+    def dfs(n):
+        nonlocal best
+        if not n: return 0
+        L=max(0,dfs(n.left)); R=max(0,dfs(n.right))
+        best=max(best, n.val+L+R)
+        return n.val+max(L,R)
+    dfs(r); return best",
+Best Time to Buy and Sell Stock,Max profit single transaction.,"[7,1,5,3,6,4] -> 5",One pass track min price.,"profit=max(profit, price-minp).",Update minp and best.,O(n),O(1),https://leetcode.com/problems/best-time-to-buy-and-sell-stock/,"def maxProfit(prices):
+    minp=10**9; best=0
+    for p in prices:
+        minp=min(minp,p); best=max(best,p-minp)
+    return best",
+Pascal's Triangle,Generate first numRows of Pascal’s triangle.,"5 -> [[1],[1,1],[1,2,1],...]",Build each row from previous.,"Use 1s at ends, middle sums.",Iterative list construction.,O(n^2),O(n),https://leetcode.com/problems/pascals-triangle/,"def generate(n):
+    res=[]
+    for i in range(n):
+        row=[1]*(i+1)
+        for j in range(1,i): row[j]=res[-1][j-1]+res[-1][j]
+        res.append(row)
+    return res",
+Subsets,All subsets (power set).,"[1,2] -> [[],[1],[2],[1,2]]",Backtracking or bitmask.,DFS include/exclude.,Recurse over elements choose/skip.,O(n*2^n),O(n),https://leetcode.com/problems/subsets/,"def subsets(nums):
+    res=[[]]
+    for x in nums:
+        res += [r+[x] for r in res]
+    return res",
+Sort Colors,"Sort 0,1,2 in-place.","[2,0,2,1,1,0] -> [0,0,1,1,2,2]",Dutch National Flag (3-way partition).,"p0, i, p2 pointers.","Swap 0s to front, 2s to back.",O(n),O(1),https://leetcode.com/problems/sort-colors/,"def sortColors(a):
+    p0=i=0; p2=len(a)-1
+    while i<=p2:
+        if a[i]==0: a[p0],a[i]=a[i],a[p0]; p0+=1; i+=1
+        elif a[i]==2: a[p2],a[i]=a[i],a[p2]; p2-=1
+        else: i+=1",
+Simplify Path,Canonical path simplification.,"""/a/./b/../../c/"" -> ""/c""","Split by '/', use stack; handle '.', '..', ''.",Push names; pop on '..'.,Join with '/'.,O(n),O(n),https://leetcode.com/problems/simplify-path/,"def simplifyPath(p):
+    st=[]
+    for part in p.split('/'):
+        if part in ('','.'): continue
+        if part=='..':
+            if st: st.pop()
+        else: st.append(part)
+    return '/'+'/'.join(st)",
+Climbing Stairs,Ways to climb with 1 or 2 steps.,n=3 -> 3,Fibonacci DP.,Iterative two variables.,dp[i]=dp[i-1]+dp[i-2].,O(n),O(1),https://leetcode.com/problems/climbing-stairs/,"def climbStairs(n):
+    a,b=1,1
+    for _ in range(n): a,b=b,a+b
+    return a",
+Vertical Order Traversal of a Binary Tree,"Order nodes by column asc, row asc, value asc within same position.",See problem example.,"DFS/BFS collect (col,row,val), then sort and group.",Traverse with coordinates; sort and group by col.,"Use heap or sort key (col,row,val).",O(n log n),O(n),https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/,"def verticalTraversal(r):
+    arr=[]
+    def dfs(n,x,y):
+        if not n: return
+        arr.append((x,y,n.val)); dfs(n.left,x-1,y+1); dfs(n.right,x+1,y+1)
+    dfs(r,0,0)
+    arr.sort()
+    res=[]; curx=None
+    for x,_,v in arr:
+        if x!=curx: res.append([]); curx=x
+        res[-1].append(v)
+    return res",
+Implement Trie (Prefix Tree),Insert/search/startsWith.,Insert 'apple'; search 'apple' True; 'app' False; startsWith 'app' True.,Trie node dict + end flag.,Walk chars creating nodes.,Set end flag on word end; search accordingly.,O(sum len),O(sum len),https://leetcode.com/problems/implement-trie-prefix-tree/,"class Trie:
+  def __init__(s): s.t={}
+  def insert(s,w):
+    t=s.t
+    for c in w: t=t.setdefault(c,{})
+    t['#']=True
+  def search(s,w):
+    t=s.t
+    for c in w:
+        if c not in t: return False
+        t=t[c]
+    return t.get('#',False)
+  def startsWith(s,p):
+    t=s.t
+    for c in p:
+        if c not in t: return False
+        t=t[c]
+    return True",
+Top K Frequent Elements,Return k most frequent values.,"nums=[1,1,1,2,2,3], k=2 -> [1,2]",Bucket sort or heap.,Count then collect from high freq buckets.,Alt: nlargest with heapq.,O(n) average,O(n),https://leetcode.com/problems/top-k-frequent-elements/,"from collections import Counter
+
+def topK(nums,k):
+    cnt=Counter(nums)
+    buckets=[[] for _ in range(len(nums)+1)]
+    for v,f in cnt.items(): buckets[f].append(v)
+    res=[]
+    for f in range(len(buckets)-1,0,-1):
+        for v in buckets[f]:
+            res.append(v)
+            if len(res)==k: return res",
+Maximal Square,Largest square of 1s in binary matrix.,See example; returns area.,DP on cell min of neighbors +1.,"dp[i][j]=1+min(top,left,diag) if 1.",Track best and square it.,O(mn),O(n) with rolling row,https://leetcode.com/problems/maximal-square/,"def maximalSquare(M):
+    m=len(M); n=len(M[0])
+    dp=[0]*(n+1); best=0
+    for i in range(1,m+1):
+        prev=0
+        for j in range(1,n+1):
+            tmp=dp[j]
+            if M[i-1][j-1]=='1' or M[i-1][j-1]==1:
+                dp[j]=1+min(dp[j],dp[j-1],prev)
+                best=max(best,dp[j])
+            else:
+                dp[j]=0
+            prev=tmp
+    return best*best",
+Interval List Intersections,Intersect two sorted disjoint interval lists.,"A=[ [0,2],[5,10] ], B=[[1,5],[8,12]] -> [[1,2],[5,5],[8,10]]",Two pointers comparing overlaps.,Advance the interval that ends first.,If max(start) <= min(end) append intersection.,O(m+n),O(1),https://leetcode.com/problems/interval-list-intersections/,"def intervalIntersection(A,B):
+    i=j=0; res=[]
+    while i<len(A) and j<len(B):
+        s=max(A[i][0],B[j][0]); e=min(A[i][1],B[j][1])
+        if s<=e: res.append([s,e])
+        if A[i][1] < B[j][1]: i+=1
+        else: j+=1
+    return res",
+Merge Intervals,Merge overlapping intervals.,"[[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]","Sort by start, then sweep merging.","Keep current, extend if overlap else push.",Compare start with last_end.,O(n log n),O(n),https://leetcode.com/problems/merge-intervals/,"def merge(iv):
+    iv.sort(key=lambda x:x[0])
+    res=[]
+    for s,e in iv:
+        if not res or s>res[-1][1]: res.append([s,e])
+        else: res[-1][1]=max(res[-1][1],e)
+    return res",
+Maximum Subarray,Maximum sum contiguous subarray.,"[-2,1,-3,4,-1,2,1,-5,4] -> 6",Kadane's algorithm.,"cur=max(x,cur+x); best=max(best,cur).",Track running best.,O(n),O(1),https://leetcode.com/problems/maximum-subarray/,"def maxSubArray(a):
+    best=cur=a[0]
+    for x in a[1:]:
+        cur=max(x,cur+x); best=max(best,cur)
+    return best",
+"Pow(x, n)",Compute x^n.,"(2,10)->1024",Fast power exponentiation by squaring.,Iterative: multiply when bit set.,Handle negative n by invert x.,O(log n),O(1),https://leetcode.com/problems/powx-n/,"def myPow(x,n):
+    if n<0: x, n = 1/x, -n
+    res=1
+    while n:
+        if n&1: res*=x
+        x*=x; n//=2
+    return res",
+Group Anagrams,Group strings that are anagrams.,"[""eat"",""tea"",""tan"",""ate"",""nat"",""bat""] -> [[""eat"",""tea"",""ate""],[""tan"",""nat""],[""bat""]]",Hash by letter counts or sorted string.,Use tuple of counts as key.,Aggregate into dict list.,O(n*k),O(n*k),https://leetcode.com/problems/group-anagrams/,"from collections import defaultdict
+
+def groupAnagrams(strs):
+    m=defaultdict(list)
+    for s in strs:
+        cnt=[0]*26
+        for c in s: cnt[ord(c)-97]+=1
+        m[tuple(cnt)].append(s)
+    return list(m.values())",
+Multiply Strings,Multiply numeric strings.,"num1='123', num2='45' -> '5535'",Simulate grade-school multiplication.,Reverse and accumulate into array; carry propagation.,Strip leading zeros.,O(mn),O(m+n),https://leetcode.com/problems/multiply-strings/,"def multiply(a,b):
+    m,n=len(a),len(b)
+    res=[0]*(m+n)
+    a=a[::-1]; b=b[::-1]
+    for i,x in enumerate(a):
+        for j,y in enumerate(b):
+            res[i+j]+= (ord(x)-48)*(ord(y)-48)
+            res[i+j+1]+=res[i+j]//10; res[i+j]%=10
+    while len(res)>1 and res[-1]==0: res.pop()
+    return ''.join(map(str,res[::-1]))",
+Trapping Rain Water,Total trapped rain between bars.,"[0,1,0,2,1,0,1,3,2,1,2,1] -> 6",Two pointers with leftMax/rightMax.,Move the smaller side inward.,"Add water as max(0, min(maxL,maxR)-height[i]).",O(n),O(1),https://leetcode.com/problems/trapping-rain-water/,"def trap(h):
+    l,r=0,len(h)-1; lm=rm=0; water=0
+    while l<r:
+        if h[l]<=h[r]:
+            lm=max(lm,h[l]); water+=lm-h[l]; l+=1
+        else:
+            rm=max(rm,h[r]); water+=rm-h[r]; r-=1
+    return water",
+Find First and Last Position of Element in Sorted Array,Find start and end index of target in sorted array.,"nums=[5,7,7,8,8,10], target=8 -> [3,4]",Binary search left and right boundaries.,Lower_bound & upper_bound-1.,Two binary searches.,O(log n),O(1),https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/,"def searchRange(a,t):
+    def lb():
+        l,r=0,len(a)
+        while l<r:
+            m=(l+r)//2
+            if a[m]<t: l=m+1
+            else: r=m
+        return l
+    def ub():
+        l,r=0,len(a)
+        while l<r:
+            m=(l+r)//2
+            if a[m]<=t: l=m+1
+            else: r=m
+        return l
+    l=lb(); r=ub()-1
+    return [-1,-1] if l>r or l==len(a) or a[l]!=t else [l,r]",
+Search in Rotated Sorted Array,Search target in rotated sorted array with no duplicates.,"nums=[4,5,6,7,0,1,2], target=0 -> 4",Modified binary search choosing sorted half.,Check which half is sorted and move accordingly.,"Compare a[l],a[m],a[r].",O(log n),O(1),https://leetcode.com/problems/search-in-rotated-sorted-array/,"def search(a,t):
+    l,r=0,len(a)-1
+    while l<=r:
+        m=(l+r)//2
+        if a[m]==t: return m
+        if a[l]<=a[m]:
+            if a[l]<=t<a[m]: r=m-1
+            else: l=m+1
+        else:
+            if a[m]<t<=a[r]: l=m+1
+            else: r=m-1
+    return -1",
+Next Permutation,Transform to next lexicographical permutation.,"[1,2,3] -> [1,3,2]","Find decreasing suffix, swap pivot with next greater, reverse suffix.",Scan from right to find i where a[i]<a[i+1].,Swap a[i] with smallest > a[i] to right; reverse.,O(n),O(1),https://leetcode.com/problems/next-permutation/,"def nextPermutation(a):
+    i=len(a)-2
+    while i>=0 and a[i]>=a[i+1]: i-=1
+    if i>=0:
+        j=len(a)-1
+        while a[j]<=a[i]: j-=1
+        a[i],a[j]=a[j],a[i]
+    a[i+1:]=reversed(a[i+1:])",
+Max Consecutive Ones III,Longest subarray of 1s after flipping at most k zeros.,"a=[1,1,1,0,0,0,1,1,1,1,0], k=2 -> 6",Sliding window counting zeros.,"Expand right; while zeros>k, move left.",Track best length.,O(n),O(1),https://leetcode.com/problems/max-consecutive-ones-iii/,"def longestOnes(a,k):
+    l=0; zeros=0; best=0
+    for r,x in enumerate(a):
+        zeros+= (x==0)
+        while zeros>k:
+            zeros -= (a[l]==0); l+=1
+        best=max(best,r-l+1)
+    return best",
+Remove Duplicates from Sorted Array,Remove duplicates in-place and return new length.,"[1,1,2] -> len=2, [1,2,_]",Two pointers write index.,Write when new value appears.,Return write pointer.,O(n),O(1),https://leetcode.com/problems/remove-duplicates-from-sorted-array/,"def removeDuplicates(a):
+    if not a: return 0
+    w=1
+    for i in range(1,len(a)):
+        if a[i]!=a[i-1]: a[w]=a[i]; w+=1
+    return w",
+Merge k Sorted Lists,Merge k sorted linked lists.,k=3 lists -> merged list.,Min-heap of current heads or divide and conquer.,"Push (val,i,node) to heap; pop/push next.",Alternative: pairwise merge.,O(N log k),O(k),https://leetcode.com/problems/merge-k-sorted-lists/,"import heapq
+
+def mergeKLists(lists):
+    h=[]
+    for i,node in enumerate(lists):
+        if node: heapq.heappush(h,(node.val,i,node))
+    dummy=ListNode(0); p=dummy
+    while h:
+        _,i,node=heapq.heappop(h); p.next=node; p=p.next
+        if node.next: heapq.heappush(h,(node.next.val,i,node.next))
+    return dummy.next",
+Valid Parentheses,Check valid parentheses using stack.,s='()[]{}' -> True,Stack matching with map of closing->opening.,"Push opening, match on closing.",Return empty stack.,O(n),O(n),https://leetcode.com/problems/valid-parentheses/,"def isValid(s):
+    st=[]; m={')':'(',']':'[','}':'{'}
+    for c in s:
+        if c in '([{': st.append(c)
+        elif not st or st.pop()!=m[c]: return False
+    return not st",
+3Sum,All unique triplets that sum to zero.,"[-1,0,1,2,-1,-4] -> [[-1,-1,2],[-1,0,1]]",Sort and two-pointer sweep.,"Fix i, then l/r inward skipping duplicates.",Skip equal values for i and l/r.,O(n^2),O(1),https://leetcode.com/problems/3sum/,"def threeSum(a):
+    a.sort(); res=[]
+    for i in range(len(a)-2):
+        if i and a[i]==a[i-1]: continue
+        l,r=i+1,len(a)-1
+        while l<r:
+            s=a[i]+a[l]+a[r]
+            if s<0: l+=1
+            elif s>0: r-=1
+            else:
+                res.append([a[i],a[l],a[r]])
+                l+=1
+                while l<r and a[l]==a[l-1]: l+=1
+    return res",
+Longest Common Prefix,Longest common prefix among strings.,"[""flower"",""flow"",""flight""] -> ""fl""",Horizontal scan or sort & compare first/last.,Compare min and max after sorting.,Take common prefix of first and last.,O(nk),O(1),https://leetcode.com/problems/longest-common-prefix/,"def lcp(strs):
+    if not strs: return ''
+    s=sorted(strs); a,b=s[0],s[-1]
+    i=0
+    while i<len(a) and i<len(b) and a[i]==b[i]: i+=1
+    return a[:i]",
+Palindrome Number,Check if integer is palindrome without string conversion (optional).,121 -> True,Reverse half of the number.,Compare first half with reversed second.,Reject negatives and numbers ending with 0 except 0.,O(log10 n),O(1),https://leetcode.com/problems/palindrome-number/,"def isPalindrome(x):
+    if x<0 or (x%10==0 and x!=0): return False
+    rev=0
+    while x>rev:
+        rev=rev*10 + x%10
+        x//=10
+    return x==rev or x==rev//2",
+String to Integer (atoi),Convert string to integer with overflow clamp.,s='  -42' -> -42,"Finite-state parse: skip spaces, sign, digits; clamp to 32-bit.",Accumulate result; check overflow every step.,Use 2^31 bounds.,O(n),O(1),https://leetcode.com/problems/string-to-integer-atoi/,"def myAtoi(s):
+    i=0; n=len(s)
+    while i<n and s[i]==' ': i+=1
+    sign=1
+    if i<n and s[i] in '+-': sign = 1 if s[i]== '+' else -1; i+=1
+    res=0; INT_MAX=2**31-1; INT_MIN=-(2**31)
+    while i<n and s[i].isdigit():
+        d=ord(s[i])-48
+        if res>INT_MAX//10 or (res==INT_MAX//10 and d>7):
+            return INT_MAX if sign==1 else INT_MIN
+        res=res*10+d; i+=1
+    return sign*res",
+Longest Palindromic Substring,Find longest palindromic substring.,babad -> bab,Expand around center (2n-1 centers).,Track best start/end.,Optionally Manacher for O(n).,O(n^2),O(1),https://leetcode.com/problems/longest-palindromic-substring/,"def longestPalindrome(s):
+    def exp(l,r):
+        while l>=0 and r<len(s) and s[l]==s[r]: l-=1; r+=1
+        return l+1,r-1
+    best=(0,0)
+    for i in range(len(s)):
+        for l,r in (exp(i,i), exp(i,i+1)):
+            if r-l>best[1]-best[0]: best=(l,r)
+    return s[best[0]:best[1]+1]",
+Longest Substring Without Repeating Characters,Length of longest substring without repeating chars.,abcabcbb -> 3,Sliding window with last-seen index.,"Move left to max(left, last[c]+1).",Track best length.,O(n),O(Σ),https://leetcode.com/problems/longest-substring-without-repeating-characters/,"def lengthOfLongestSubstring(s):
+    last={}; l=best=0
+    for r,c in enumerate(s):
+        if c in last and last[c]>=l: l=last[c]+1
+        last[c]=r; best=max(best,r-l+1)
+    return best",
+Add Two Numbers,Add two numbers represented by reverse-order linked lists.,"[2,4,3] + [5,6,4] -> [7,0,8]",Simulate addition with carry.,Iterate while nodes or carry.,Build result list.,O(m+n),O(1) extra,https://leetcode.com/problems/add-two-numbers/,"def addTwoNumbers(l1,l2):
+    carry=0; dummy=ListNode(0); p=dummy
+    while l1 or l2 or carry:
+        v=(l1.val if l1 else 0)+(l2.val if l2 else 0)+carry
+        carry, d = divmod(v,10)
+        p.next=ListNode(d); p=p.next
+        l1=l1 and l1.next; l2=l2 and l2.next
+    return dummy.next",
+Two Sum,Find indices of two numbers summing to target.,"nums=[2,7,11,15], target=9 -> [0,1]",Hash map value->index.,"For each x, if target-x in map return pair.",Insert after check.,O(n),O(n),https://leetcode.com/problems/two-sum/,"def twoSum(a,t):
+    m={}
+    for i,x in enumerate(a):
+        if t-x in m: return [m[t-x], i]
+        m[x]=i",
